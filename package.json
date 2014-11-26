@@ -1,0 +1,22 @@
+{
+  "name": "wikilab-model",
+  "version": "1.0.0",
+  "description": "The model layer of WikiLab",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:wikilab/wikilab-model.git"
+  },
+  "keywords": [
+    "wikilab"
+  ],
+  "author": "Zihua Li",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/wikilab/wikilab-model/issues"
+  },
+  "homepage": "https://github.com/wikilab/wikilab-model"
+}
