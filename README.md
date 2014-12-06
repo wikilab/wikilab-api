@@ -1,9 +1,9 @@
-wikilab-model
+wikilab-api
 =============
 
-The model layer of WikiLab
+The API layer of WikiLab
 
 Install
 -------
 
-    npm install wikilab-model
+    npm install wikilab-api
