@@ -22,7 +22,7 @@ describe('POST /users', function() {
       email: 'tom@email.com',
       password: '123'
     }).then(function(body) {
-      throw new Error('should return with error.');
+      throw new Error('should reject');
     }).catch(function(err) {
       expect(err.body.error).to.be.instanceof(Array);
       expect(err.statusCode).to.eql(400);
