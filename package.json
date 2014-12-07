@@ -4,7 +4,7 @@
   "description": "The model layer of WikiLab",
   "main": "index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "NODE_ENV=test mocha --harmony"
   },
   "repository": {
     "type": "git",
@@ -37,7 +37,8 @@
   },
   "devDependencies": {
     "chai": "^1.10.0",
+    "chai-as-promised": "^4.1.1",
     "mocha": "^2.0.1",
-    "tser": "^1.0.0"
+    "tser": "^1.1.0"
   }
 }

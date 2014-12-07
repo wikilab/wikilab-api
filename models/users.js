@@ -1,11 +1,15 @@
 var bcrypt = require('bcrypt');
+var Instance = require('../node_modules/sequelize/lib/instance.js');
 
 module.exports = function(DataTypes) {
   return [{
     email:    {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true
+      unique: true,
+      validate: {
+        isEmail: true
+      }
     },
     password: {
       type: DataTypes.STRING,
@@ -17,7 +21,10 @@ module.exports = function(DataTypes) {
     }
   }, {
     hooks: {
-      beforeCreate: function(user, fn) {
+      beforeCreate: function(user, _, fn) {
+        if (!user.password) {
+          return fn(null, user);
+        }
         bcrypt.hash(user.password, $config.bcryptRound, function(err, hash) {
           user.password = hash;
           fn(null, user);
@@ -25,9 +32,17 @@ module.exports = function(DataTypes) {
       }
     },
     instanceMethods: {
+      toJSON: function() {
+        // Protect password field
+        // Related issue: https://github.com/sequelize/sequelize/issues/2156
+        var ret = Instance.prototype.toJSON.call(this);
+        delete ret.password;
+        return ret;
+      },
       comparePassword: function(password) {
+        var currentPassword = this.password;
         return new Promise(function(resolve, reject) {
-          bcrypt.compare(password, this.password, function(err, res) {
+          bcrypt.compare(password, currentPassword , function(err, res) {
             if (err) {
               reject(err);
             } else {
@@ -36,9 +51,9 @@ module.exports = function(DataTypes) {
           });
         });
       },
-      updatePassword: function(password) {
+      updatePassword: function(newPassword) {
         var hashPassword = new Promise(function(resolve, reject) {
-          bcrypt.hash(user.password, $config.bcryptRound, function(err, hash) {
+          bcrypt.hash(newPassword, $config.bcryptRound, function(err, hash) {
             if (err) {
               reject(err);
             } else {
@@ -46,9 +61,10 @@ module.exports = function(DataTypes) {
             }
           });
         });
+        var _this = this;
         return hashPassword.then(function(hash) {
-          user.password = hash;
-          return user.save();
+          _this.password = hash;
+          return _this.save(['password']);
         });
       }
     }

@@ -1,0 +1,4 @@
+--require env
+--require test/helpers/global
+--reporter spec
+--recursive

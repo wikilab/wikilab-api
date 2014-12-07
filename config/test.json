@@ -11,5 +11,5 @@
   "session": {
     "secret": "Session Secret"
   },
-  "bcryptRound": 0
+  "bcryptRound": 1
 }

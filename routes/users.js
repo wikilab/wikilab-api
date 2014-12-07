@@ -1,5 +1,5 @@
 var router = module.exports = new (require('koa-router'))();
 
-router.get('/', function *() {
-  this.body = { name: 'bob' };
+router.post('/', function *() {
+  this.body = yield User.create(this.request.body);
 });

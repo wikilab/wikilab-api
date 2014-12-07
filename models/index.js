@@ -23,4 +23,3 @@ Object.keys(models).forEach(function(key) {
 });
 
 self.sequelize = self.DB = sequelize;
-sequelize.sync();
