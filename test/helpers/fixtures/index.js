@@ -1,6 +1,5 @@
 var fixtures = require('node-require-directory')(__dirname);
 
-
 exports.load = function(specificFixtures) {
   return exports.unload().then(function() {
     if (typeof specificFixtures === 'string') {

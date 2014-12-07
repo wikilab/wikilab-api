@@ -14,8 +14,6 @@ describe('Model.User', function() {
       }).then(function(user) {
         expect(user.password).to.not.eql('123');
         return expect(user.comparePassword('123')).to.become(true);
-      }).catch(function(e) {
-        console.log(e);
       });
     });
 

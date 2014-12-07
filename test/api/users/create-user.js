@@ -17,14 +17,12 @@ describe('POST /users', function() {
   });
 
   it('should reject when missing required properties', function() {
-    api.users.post({
-      name: 'Tom',
-      email: 'tom@email.com',
-      password: '123'
+    return api.users.post({
+      email: 'tom@email.com'
     }).then(function(body) {
       throw new Error('should reject');
     }).catch(function(err) {
-      expect(err.body.error).to.be.instanceof(Array);
+      expect(err.body.error).to.eql('Parameter Error');
       expect(err.statusCode).to.eql(400);
     });
   });
