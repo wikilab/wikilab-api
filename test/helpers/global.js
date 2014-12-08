@@ -9,4 +9,11 @@ global.expect = chai.expect;
 global.fixtures = require('./fixtures');
 
 var tser = require('tser');
-global.api = tser(require('../../'));
+
+var api = require('../../');
+Object.defineProperty(global, 'api', {
+  get: function() {
+    return tser(api);
+  }
+});
+

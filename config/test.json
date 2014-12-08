@@ -10,6 +10,5 @@
   },
   "session": {
     "secret": "Session Secret"
-  },
-  "bcryptRound": 1
+  }
 }

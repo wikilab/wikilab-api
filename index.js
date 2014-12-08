@@ -1,8 +1,10 @@
 require('./env');
+var http = require('http');
 var koa = require('koa');
 var app = koa();
 app.use(require('koa-bodyparser')());
 
+// Error handling
 app.use(function *(next) {
   try {
     yield next;
@@ -17,10 +19,28 @@ app.use(function *(next) {
       };
     } else {
       this.status = err.status || 500;
-      this.body = err.message;
+      err.error = err.error || http.STATUS_CODES[this.status];
+      this.body = {
+        error: err.error
+      };
+      if (this.status === 500) {
+        console.error(err.stack);
+      }
     }
-    this.app.emit('error', err, this);
   }
+});
+
+// Basic auth
+var auth = require('basic-auth');
+app.use(function *(next) {
+  var user = auth(this.req);
+  if (user) {
+    var userInstance = yield User.find({ where: { email: user.name } });
+    if (userInstance && (yield userInstance.comparePassword(user.pass))) {
+      this.me = userInstance;
+    }
+  }
+  yield next;
 });
 
 require('./routes')(app);

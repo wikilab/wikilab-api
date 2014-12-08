@@ -2,7 +2,12 @@ var tser = require('tser');
 
 describe('Model.User', function() {
   beforeEach(function() {
+    $config.bcryptRound = 1;
     return fixtures.load('users');
+  });
+
+  afterEach(function() {
+    $config.bcryptRound = null;
   });
 
   describe('password', function() {

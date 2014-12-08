@@ -22,6 +22,9 @@ module.exports = function(DataTypes) {
   }, {
     hooks: {
       beforeCreate: function(user, _, fn) {
+        if (!$config.bcryptRound) {
+          return fn(null, user);
+        }
         if (!user.password) {
           return fn(null, user);
         }
@@ -40,6 +43,9 @@ module.exports = function(DataTypes) {
         return ret;
       },
       comparePassword: function(password) {
+        if (!$config.bcryptRound) {
+          return Promise.resolve(this.password === password);
+        }
         var currentPassword = this.password;
         return new Promise(function(resolve, reject) {
           bcrypt.compare(password, currentPassword , function(err, res) {
@@ -52,15 +58,20 @@ module.exports = function(DataTypes) {
         });
       },
       updatePassword: function(newPassword) {
-        var hashPassword = new Promise(function(resolve, reject) {
-          bcrypt.hash(newPassword, $config.bcryptRound, function(err, hash) {
-            if (err) {
-              reject(err);
-            } else {
-              resolve(hash);
-            }
+        var hashPassword;
+        if (!$config.bcryptRound) {
+          hashPassword = Promise.resolve(newPassword);
+        } else {
+          hashPassword = new Promise(function(resolve, reject) {
+            bcrypt.hash(newPassword, $config.bcryptRound, function(err, hash) {
+              if (err) {
+                reject(err);
+              } else {
+                resolve(hash);
+              }
+            });
           });
-        });
+        }
         var _this = this;
         return hashPassword.then(function(hash) {
           _this.password = hash;
