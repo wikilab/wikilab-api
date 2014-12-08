@@ -35,3 +35,13 @@ router.patch('/:user', function *(next) {
     this.body = this.user;
   }
 });
+
+router.put('/:user/password', function *(next) {
+  this.assert(this.me, 401);
+  this.assert(this.me.id === this.user.id, 403);
+
+  var isPasswordCorrect = yield this.me.comparePassword(this.request.body.oldPassword);
+  this.assert(isPasswordCorrect, 400, { error: 'Wrong Password' });
+
+  this.body = yield this.me.updatePassword(this.request.body.newPassword);
+});
