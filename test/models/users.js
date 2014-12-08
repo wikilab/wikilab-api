@@ -1,5 +1,3 @@
-var tser = require('tser');
-
 describe('Model.User', function() {
   beforeEach(function() {
     $config.bcryptRound = 1;
