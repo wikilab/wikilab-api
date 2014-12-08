@@ -22,4 +22,10 @@ Object.keys(models).forEach(function(key) {
   self[modelName] = modelInstance;
 });
 
+self.User.hasMany(self.Team);
+self.Team.hasMany(self.User);
+
+self.Project.hasMany(self.Team, { through: self.ProjectTeam });
+self.Team.hasMany(self.Project, { through: self.ProjectTeam });
+
 self.sequelize = self.DB = sequelize;
