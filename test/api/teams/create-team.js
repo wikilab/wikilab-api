@@ -1,7 +1,7 @@
 describe('POST /teams', function() {
   beforeEach(function() {
     return fixtures.load().then(function() {
-      return fixtures.users[0].addTeam(fixtures.teams[0]);
+      return fixtures.users[0].addTeams(fixtures.teams[0]);
     });
   });
 

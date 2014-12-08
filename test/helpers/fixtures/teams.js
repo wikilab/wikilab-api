@@ -5,7 +5,23 @@ exports.load = function() {
       type: 'owner'
     }),
     Team.build({
-      name: 'User',
+      name: 'User1',
+      type: 'user'
+    }),
+    Team.build({
+      name: 'User2',
+      type: 'user'
+    }),
+    Team.build({
+      name: 'User3',
+      type: 'user'
+    }),
+    Team.build({
+      name: 'User4',
+      type: 'user'
+    }),
+    Team.build({
+      name: 'User5',
       type: 'user'
     })
   ];

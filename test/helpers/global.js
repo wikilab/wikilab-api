@@ -13,7 +13,9 @@ var tser = require('tser');
 var api = require('../../');
 Object.defineProperty(global, 'api', {
   get: function() {
-    return tser(api);
+    return tser(api, {
+      defaults: { json: true }
+    });
   }
 });
 
