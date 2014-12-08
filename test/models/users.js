@@ -1,7 +1,7 @@
 describe('Model.User', function() {
   beforeEach(function() {
     $config.bcryptRound = 1;
-    return fixtures.load('users');
+    return fixtures.load();
   });
 
   afterEach(function() {
@@ -41,8 +41,13 @@ describe('Model.User', function() {
 
   describe('#isOwner()', function() {
     it('should return the correct value', function() {
-      expect(fixtures.users[0].isOwner()).to.become(true);
-      expect(fixtures.users[1].isOwner()).to.become(true);
+      var user = fixtures.users[0];
+      expect(user.isOwner()).to.become(false);
+      return user.addTeam(fixtures.teams[0]).then(function() {
+        return user.reload().then(function() {
+          return expect(user.isOwner()).to.become(true);
+        });
+      });
     });
   });
 });

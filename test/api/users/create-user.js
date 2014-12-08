@@ -22,7 +22,7 @@ describe('POST /users', function() {
     }).then(function(body) {
       throw new Error('should reject');
     }).catch(function(err) {
-      expect(err.body.error).to.eql('Parameter Error');
+      expect(err.body).to.have.property('error', 'Parameter Error');
       expect(err.statusCode).to.eql(400);
     });
   });
