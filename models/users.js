@@ -77,6 +77,11 @@ module.exports = function(DataTypes) {
           _this.password = hash;
           return _this.save(['password']);
         });
+      },
+      isOwner: function() {
+        return this.getTeams({ where: { type: 'owner' } }).then(function(teams) {
+          return teams.length > 0;
+        });
       }
     }
   }];

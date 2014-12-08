@@ -38,4 +38,11 @@ describe('Model.User', function() {
       });
     });
   });
+
+  describe('#isOwner()', function() {
+    it('should return the correct value', function() {
+      expect(fixtures.users[0].isOwner()).to.become(true);
+      expect(fixtures.users[1].isOwner()).to.become(true);
+    });
+  });
 });
