@@ -11,7 +11,7 @@ describe('PUT /users/:user/password', function() {
     });
   });
 
-  it('should return 403 when patch other people', function() {
+  it('should return 403 when change other\'s password', function() {
     var user = fixtures.users[0];
     return api.$auth(user.email, user.password).users(fixtures.users[1].id).password.put().then(function(user) {
       throw new Error('should reject');
@@ -29,7 +29,7 @@ describe('PUT /users/:user/password', function() {
     });
   });
 
-  it('should return 400 with wrong password', function() {
+  it('should return 400 with wrong old password', function() {
     var user = fixtures.users[0];
     return api.$auth(user.email, user.password).users(user.id).password.put({
       newPassword: 'updated password',
@@ -41,7 +41,7 @@ describe('PUT /users/:user/password', function() {
     });
   });
 
-  it('should change the password successfully with correct password', function() {
+  it('should change the password successfully with correct old password', function() {
     var user = fixtures.users[0];
     return api.$auth(user.email, user.password).users(user.id).password.put({
       oldPassword: user.password,

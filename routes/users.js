@@ -1,7 +1,14 @@
 var router = module.exports = new (require('koa-router'))();
 
 router.post('/', function *() {
-  this.body = yield User.create(this.request.body);
+  var user = yield User.create(this.request.body);
+
+  var hasOwnerTeam = (yield Team.count({ where: { type: 'owner' } })) !== 0;
+  if (!hasOwnerTeam) {
+    var ownerTeam = yield Team.create({ name: 'Owner', type: 'owner' });
+    yield user.addTeam(ownerTeam);
+  }
+  this.body = user;
 });
 
 router.param('user', function *(id, next) {

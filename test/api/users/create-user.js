@@ -26,4 +26,22 @@ describe('POST /users', function() {
       expect(err.statusCode).to.eql(400);
     });
   });
+
+  it('should become the owner if one is the first user', function() {
+    return fixtures.unload().then(function() {
+      return api.users.post({
+        name: 'Tom',
+        email: 'tom@email.com',
+        password: '123'
+      }).then(function(user) {
+        return User.find({
+          where: { id: user.id },
+          include: [{ model: Team }]
+        }).then(function(user) {
+          expect(user.Teams).to.have.length(1);
+          expect(user.Teams[0]).to.have.property('type', 'owner');
+        });
+      });
+    });
+  });
 });
