@@ -16,6 +16,20 @@ describe('POST /users', function() {
     });
   });
 
+  it('should return 403 signing up is disabled', function() {
+    return Setting.set('enableSignUp', false).then(function() {
+      return api.users.post({
+        name: 'Tom',
+        email: 'tom@email.com',
+        password: '123'
+      }).then(function() {
+        throw new Error('should reject');
+      }).catch(function(err) {
+        expect(err.statusCode).to.eql(403);
+      });
+    });
+  });
+
   it('should reject when missing required properties', function() {
     return api.users.post({
       email: 'tom@email.com'

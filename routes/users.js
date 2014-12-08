@@ -1,9 +1,12 @@
 var router = module.exports = new (require('koa-router'))();
 
 router.post('/', function *() {
-  var user = yield User.create(this.request.body);
-
   var hasOwnerTeam = (yield Team.count({ where: { type: 'owner' } })) !== 0;
+
+  var allowSignUp = !hasOwnerTeam || (yield Setting.get('enableSignUp', true));
+  this.assert(allowSignUp, 403, 'Sign up is disabled');
+
+  var user = yield User.create(this.request.body);
   if (!hasOwnerTeam) {
     var ownerTeam = yield Team.create({ name: 'Owner', type: 'owner' });
     yield user.addTeam(ownerTeam);
@@ -24,7 +27,6 @@ router.param('user', function *(id, next) {
 });
 
 router.patch('/:user', function *(next) {
-  this.assert(this.me, 401);
   this.assert(this.me.id === this.user.id, 403);
 
   var properties = ['name', 'email'];
@@ -44,7 +46,6 @@ router.patch('/:user', function *(next) {
 });
 
 router.put('/:user/password', function *(next) {
-  this.assert(this.me, 401);
   this.assert(this.me.id === this.user.id, 403);
 
   var isPasswordCorrect = yield this.me.comparePassword(this.request.body.oldPassword);

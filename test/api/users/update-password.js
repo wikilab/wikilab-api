@@ -3,14 +3,6 @@ describe('PUT /users/:user/password', function() {
     return fixtures.load();
   });
 
-  it('should return 401 without auth', function() {
-    return api.users(fixtures.users[0].id).password.put().then(function(user) {
-      throw new Error('should reject');
-    }).catch(function(err) {
-      expect(err.statusCode).to.eql(401);
-    });
-  });
-
   it('should return 403 when change other\'s password', function() {
     var user = fixtures.users[0];
     return api.$auth(user.email, user.password).users(fixtures.users[1].id).password.put().then(function(user) {

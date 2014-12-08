@@ -36,10 +36,13 @@ var auth = require('basic-auth');
 app.use(function *(next) {
   var user = auth(this.req);
   if (user) {
+    this.assert(user, 401);
     var userInstance = yield User.find({ where: { email: user.name } });
-    if (userInstance && (yield userInstance.comparePassword(user.pass))) {
-      this.me = userInstance;
-    }
+    this.assert(userInstance, 401);
+    this.assert(yield userInstance.comparePassword(user.pass), 401);
+    this.me = userInstance;
+  } else {
+    this.assert(this.path === '/users', 401);
   }
   yield next;
 });

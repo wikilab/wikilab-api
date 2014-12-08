@@ -1,8 +1,6 @@
 var router = module.exports = new (require('koa-router'))();
 
 router.get('/', function *() {
-  this.assert(this.me, 401);
-
   var teams = yield this.me.getTeams();
 
   var projects = {};

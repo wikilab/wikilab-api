@@ -23,14 +23,6 @@ describe('GET /projects', function() {
     });
   });
 
-  it('should return 401 without login', function() {
-    return api.projects.get().then(function() {
-      throw new Error('should reject');
-    }).catch(function(err) {
-      expect(err).to.have.property('statusCode', 401);
-    });
-  });
-
   it('should return all my projects with correct permission', function() {
     var user = fixtures.users[0];
     return api.$auth(user.email, user.password).projects.get().then(function(projects) {
