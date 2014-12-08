@@ -17,15 +17,19 @@ exports.load = function(specificFixtures) {
     }).forEach(function(key) {
       var promise = fixtures[key].load().then(function(instances) {
         exports[key] = instances;
-      }).catch(function(e) {
-        console.error('Load fixtures', e);
       });
       promises.push(promise);
     });
     return Promise.all(promises);
+  }).catch(function(err) {
+    console.error(err.stack);
   });
 };
 
 exports.unload = function() {
-  return sequelize.sync({ force: true });
+  return sequelize.query('SET FOREIGN_KEY_CHECKS = 0').then(function() {
+    return sequelize.sync({ force: true });
+  }).then(function() {
+    return sequelize.query('SET FOREIGN_KEY_CHECKS = 1');
+  });
 };
