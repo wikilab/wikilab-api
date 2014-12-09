@@ -14,6 +14,11 @@ Object.keys(models).forEach(function(key) {
   var modelName = inflection.classify(key);
   var modelInstance = sequelize.import(modelName , function(sequelize, DataTypes) {
     var definition = [modelName].concat(models[key](DataTypes));
+    if (sequelize.options.dialect === 'mysql') {
+      DataTypes.LONGTEXT = 'LONGTEXT';
+    } else {
+      DataTypes.LONGTEXT = 'TEXT';
+    }
     return sequelize.define.apply(sequelize, definition);
   });
   self[modelName] = modelInstance;
