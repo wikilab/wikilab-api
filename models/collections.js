@@ -43,7 +43,7 @@ module.exports = function(DataTypes) {
         var tree = new TreeModel();
         dirs = tree.parse(this.dirs);
 
-        this.getdocuments({
+        this.getDocs({
           where: { current: true },
           attributes: ['UUID']
         }).then(function(documents) {

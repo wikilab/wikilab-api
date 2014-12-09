@@ -17,27 +17,36 @@ module.exports = function(DataTypes) {
         notEmpty: true
       }
     },
+    content: {
+      type: DataTypes.LONGTEXT,
+      allowNull: false
+    },
+    current: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true
+    },
     distance: {
       type: DataTypes.INTEGER,
-      defaultValue: 0,
-      validate: {
-        min: 0,
-        max: 100
-      }
+      defaultValue: 0
     }
   }, {
-    beforeCreate: function(doc, _, fn) {
-      Doc.find({
-        where: { UUID: doc.UUID, type: 'current' },
-        attributes: ['content']
-      }).then(function(prevDoc) {
-        if (!prevDoc) {
-          return fn(null, prevDoc);
-        }
-        var similarity = natural.JaroWinklerDistance(doc.content, prevDoc);
-        doc.distance = Math.round((1 - similarity) * 100);
-        fn(null, doc);
-      });
+    hooks: {
+      beforeCreate: function(doc, _, fn) {
+        Doc.find({
+          where: { UUID: doc.UUID, current: true },
+          attributes: ['id', 'content', 'current']
+        }).then(function(prevDoc) {
+          if (!prevDoc) {
+            return fn(null, prevDoc);
+          }
+          doc.distance = natural.LevenshteinDistance(doc.content, prevDoc.content);
+          prevDoc.updateAttributes({ current: false }, ['current']).then(function(e) {
+            fn(null, doc);
+          }).catch(function(e) {
+            fn(e);
+          });
+        });
+      }
     }
   }];
 };
