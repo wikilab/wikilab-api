@@ -2,9 +2,9 @@ language: node_js
 node_js:
   - "0.11"
 env:
-  - DB_DIALECT=mysql DB_NAME=wikilab_test DB_USER=root DB_PASS=""
-  - DB_DIALECT=postgres DB_NAME=wikilab_test DB_USER=postgres DB_PASS=""
-  - DB_DIALECT=sqlite DB_NAME=wikilab_test
+  - DB_DIALECT=mysql DB_NAME=wikilab-test DB_USER=root DB_PASS=""
+  - DB_DIALECT=postgres DB_NAME=wikilab-test DB_USER=postgres DB_PASS=""
+  - DB_DIALECT=sqlite DB_NAME=wikilab-test
 before_script:
-  - mysql -e 'create database wikilab_test;'
-  - psql -c 'create database wikilab_test;' -U postgres
+  - mysql -e 'create database wikilab-test;'
+  - psql -c 'create database wikilab-test;' -U postgres
