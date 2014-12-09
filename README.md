@@ -3,7 +3,8 @@ wikilab-api
 
 The API layer of WikiLab
 
-![](https://travis-ci.org/wikilab/wikilab-api.svg?branch=master)
+![Build Status](https://travis-ci.org/wikilab/wikilab-api.svg?branch=master)
+[![Coverage Status](https://coveralls.io/repos/wikilab/wikilab-api/badge.png?branch=master)](https://coveralls.io/r/wikilab/wikilab-api?branch=master)
 
 Install
 -------
