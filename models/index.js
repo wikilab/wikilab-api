@@ -1,12 +1,7 @@
 var Sequelize = require('sequelize');
 var inflection = require('inflection');
 
-if (typeof $config.database.log == 'undefined') {
-  $config.database.logging = false;
-} else {
-  $config.database.logging = $config.database.log ? console.log : false;
-}
-
+$config.database.logging = $config.database.log ? console.log : false;
 var sequelize = new Sequelize($config.database.name,
                               $config.database.user,
                               $config.database.pass,
@@ -16,9 +11,6 @@ var self = module.exports = {};
 
 var models = require('node-require-directory')(__dirname);
 Object.keys(models).forEach(function(key) {
-  if (key === 'index') {
-    return;
-  }
   var modelName = inflection.classify(key);
   var modelInstance = sequelize.import(modelName , function(sequelize, DataTypes) {
     var definition = [modelName].concat(models[key](DataTypes));

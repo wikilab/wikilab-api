@@ -24,9 +24,6 @@ app.use(function *(next) {
       this.body = {
         error: err.error
       };
-      if (this.status === 500) {
-        console.error(err.stack);
-      }
     }
   }
 });
@@ -50,7 +47,7 @@ app.use(function *(next) {
 require('./routes')(app);
 
 if (require.main === module) {
-  app.listen(4000);
+  app.listen($config.port || 4000);
 } else {
   module.exports = app;
 }

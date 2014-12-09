@@ -25,9 +25,6 @@ module.exports = function(DataTypes) {
         if (!$config.bcryptRound) {
           return fn(null, user);
         }
-        if (!user.password) {
-          return fn(null, user);
-        }
         bcrypt.hash(user.password, $config.bcryptRound, function(err, hash) {
           user.password = hash;
           fn(null, user);
