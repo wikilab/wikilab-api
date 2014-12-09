@@ -1,7 +1,7 @@
 {
   "database": {
     "dialect": "DB_DIALECT",
-    "data": "DB_NAME",
+    "name": "DB_NAME",
     "user": "DB_USER",
     "pass": "DB_PASS"
   }
