@@ -27,9 +27,13 @@ exports.load = function(specificFixtures) {
 };
 
 exports.unload = function() {
-  return sequelize.query('SET FOREIGN_KEY_CHECKS = 0').then(function() {
+  if (sequelize.options.dialect === 'mysql') {
+    return sequelize.query('SET FOREIGN_KEY_CHECKS = 0').then(function() {
+      return sequelize.sync({ force: true });
+    }).then(function() {
+      return sequelize.query('SET FOREIGN_KEY_CHECKS = 1');
+    });
+  } else {
     return sequelize.sync({ force: true });
-  }).then(function() {
-    return sequelize.query('SET FOREIGN_KEY_CHECKS = 1');
-  });
+  }
 };
