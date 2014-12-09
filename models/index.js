@@ -6,6 +6,7 @@ if (typeof $config.database.log == 'undefined') {
 } else {
   $config.database.logging = $config.database.log ? console.log : false;
 }
+
 var sequelize = new Sequelize($config.database.name,
                               $config.database.user,
                               $config.database.pass,
