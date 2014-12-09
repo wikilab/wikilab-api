@@ -24,10 +24,10 @@ Object.keys(models).forEach(function(key) {
   self[modelName] = modelInstance;
 });
 
-self.User.hasMany(self.Team);
-self.Team.hasMany(self.User);
+self.User.hasMany(self.Team, { constraints: false });
+self.Team.hasMany(self.User, { constraints: false });
 
-self.Project.hasMany(self.Team, { through: self.ProjectTeam });
-self.Team.hasMany(self.Project, { through: self.ProjectTeam });
+self.Project.hasMany(self.Team, { through: self.ProjectTeam, constraints: false });
+self.Team.hasMany(self.Project, { through: self.ProjectTeam, constraints: false });
 
 self.sequelize = self.DB = sequelize;
