@@ -4,7 +4,7 @@
   "description": "The model layer of WikiLab",
   "main": "index.js",
   "scripts": {
-    "test": "NODE_ENV=test mocha --harmony"
+    "test": "NODE_ENV=test node --harmony ./node_modules/istanbul-harmony/lib/cli.js cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"
   },
   "repository": {
     "type": "git",
@@ -44,6 +44,9 @@
   "devDependencies": {
     "chai": "^1.10.0",
     "chai-as-promised": "^4.1.1",
+    "coveralls": "^2.11.2",
+    "istanbul": "^0.3.5",
+    "istanbul-harmony": "^0.3.1",
     "mocha": "^2.0.1",
     "tser": "^1.2.0"
   }
