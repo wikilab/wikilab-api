@@ -4,7 +4,8 @@
   "description": "The model layer of WikiLab",
   "main": "index.js",
   "scripts": {
-    "test": "NODE_ENV=test node --harmony ./node_modules/istanbul-harmony/lib/cli.js cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"
+    "test": "NODE_ENV=test mocha --harmony",
+    "test-cov": "NODE_ENV=test node --harmony ./node_modules/istanbul-harmony/lib/cli.js cover --preserve-comments ./node_modules/mocha/bin/_mocha -- -R spec"
   },
   "repository": {
     "type": "git",

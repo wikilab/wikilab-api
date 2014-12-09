@@ -1,6 +1,7 @@
 language: node_js
 node_js:
   - "0.11"
+script: npm run test-cov
 env:
   - DB_DIALECT=mysql DB_NAME=wikilab_test DB_USER=root DB_PASS=""
   - DB_DIALECT=postgres DB_NAME=wikilab_test DB_USER=postgres DB_PASS=""
@@ -8,3 +9,4 @@ env:
 before_script:
   - mysql -e 'create database wikilab_test;'
   - psql -c 'create database wikilab_test;' -U postgres
+after_success: cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
