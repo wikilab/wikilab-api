@@ -1,6 +1,6 @@
 {
   "database": {
-    "type": "mysql",
+    "dialect": "mysql",
     "name": "wikilab",
     "user": "",
     "pass": "",
