@@ -1,9 +1,10 @@
 {
-  "mysql": {
-    "database": "wikilab",
-    "username": "",
-    "password": "",
-    "logging": false
+  "database": {
+    "type": "mysql",
+    "name": "wikilab",
+    "user": "",
+    "pass": "",
+    "log": false
   },
   "bcryptRound": 8
 }

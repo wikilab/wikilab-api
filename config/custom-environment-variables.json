@@ -1,7 +1,8 @@
 {
-  "mysql": {
-    "database": "DB_NAME",
-    "username": "DB_USER",
-    "password": "DB_PASS"
+  "database": {
+    "type": "DB_TYPE",
+    "data": "DB_NAME",
+    "user": "DB_USER",
+    "pass": "DB_PASS"
   }
 }

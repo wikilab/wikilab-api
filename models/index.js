@@ -1,11 +1,15 @@
 var Sequelize = require('sequelize');
 var inflection = require('inflection');
-var config = require('config');
 
-var sequelize = new Sequelize(config.mysql.database,
-                              config.mysql.username,
-                              config.mysql.password,
-                              config.mysql);
+if (typeof $config.database.log == 'undefined') {
+  $config.database.logging = false;
+} else {
+  $config.database.logging = $config.database.log ? console.log : false;
+}
+var sequelize = new Sequelize($config.database.name,
+                              $config.database.user,
+                              $config.database.pass,
+                              $config.database);
 
 var self = module.exports = {};
 

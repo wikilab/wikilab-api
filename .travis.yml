@@ -1,6 +1,10 @@
 language: node_js
 node_js:
   - "0.11"
-env: DB_NAME=wikilab_test DB_USER=root DB_PASS=""
+env:
+  - DB_TYPE=mysql DB_NAME=wikilab_test DB_USER=root DB_PASS=""
+  - DB_TYPE=postgres DB_NAME=wikilab_test DB_USER=postgres DB_PASS=""
+  - DB_TYPE=sqlite DB_NAME=wikilab_test
 before_script:
   - mysql -e 'create database wikilab_test;'
+  - psql -c 'create database wikilab_test;' -U postgres
