@@ -3,6 +3,7 @@
     "dialect": "DB_DIALECT",
     "name": "DB_NAME",
     "user": "DB_USER",
-    "pass": "DB_PASS"
+    "pass": "DB_PASS",
+    "log": "DB_LOG"
   }
 }
