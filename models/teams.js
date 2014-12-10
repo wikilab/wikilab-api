@@ -11,15 +11,13 @@ module.exports = function(DataTypes) {
     }
   }, {
     hooks: {
-      beforeCreate: function(teams, _, fn) {
+      beforeCreate: function(teams) {
         if (teams.type !== 'owner') {
-          return fn(null, teams);
+          return;
         }
-        Team.count({ where: { type: 'owner' } }).then(function(count) {
+        return Team.count({ where: { type: 'owner' } }).then(function(count) {
           if (count > 0) {
-            fn(new Error('Owner team is existed'));
-          } else {
-            fn(null, teams);
+            throw new Error('Owner team is existed');
           }
         });
       }

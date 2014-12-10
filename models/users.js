@@ -21,13 +21,18 @@ module.exports = function(DataTypes) {
     }
   }, {
     hooks: {
-      beforeCreate: function(user, _, fn) {
+      beforeCreate: function(user) {
         if (!$config.bcryptRound) {
-          return fn(null, user);
+          return;
         }
-        bcrypt.hash(user.password, $config.bcryptRound, function(err, hash) {
-          user.password = hash;
-          fn(null, user);
+        return new Promise(function(resolve, reject) {
+          bcrypt.hash(user.password, $config.bcryptRound, function(err, hash) {
+            if (err) {
+              return reject(err);
+            }
+            user.password = hash;
+            resolve();
+          });
         });
       }
     },

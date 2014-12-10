@@ -31,20 +31,16 @@ module.exports = function(DataTypes) {
     }
   }, {
     hooks: {
-      beforeCreate: function(doc, _, fn) {
-        Doc.find({
+      beforeCreate: function(doc) {
+        return Doc.find({
           where: { UUID: doc.UUID, current: true },
           attributes: ['id', 'content', 'current']
         }).then(function(prevDoc) {
           if (!prevDoc) {
-            return fn(null, prevDoc);
+            return;
           }
           doc.distance = natural.LevenshteinDistance(doc.content, prevDoc.content);
-          prevDoc.updateAttributes({ current: false }, ['current']).then(function(e) {
-            fn(null, doc);
-          }).catch(function(e) {
-            fn(e);
-          });
+          return prevDoc.updateAttributes({ current: false }, ['current']);
         });
       }
     }
