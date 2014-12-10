@@ -10,3 +10,6 @@ before_script:
   - mysql -e 'create database wikilab_test;'
   - psql -c 'create database wikilab_test;' -U postgres
 after_success: cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
+cache:
+  directories:
+    - node_modules
