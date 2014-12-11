@@ -34,8 +34,7 @@
     "natural": "^0.1.29",
     "node-require-directory": "^1.0.2",
     "pg": "^4.1.0",
-    "sequelize": "^2.0.0-rc3",
-    "sqlite3": "^3.0.4"
+    "sequelize": "^2.0.0-rc3"
   },
   "devDependencies": {
     "chai": "^1.10.0",

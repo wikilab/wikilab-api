@@ -13,7 +13,6 @@ script:
 env:
   - DB_DIALECT=mysql DB_NAME=wikilab_test DB_USER=root DB_PASS=""
   - DB_DIALECT=postgres DB_NAME=wikilab_test DB_USER=postgres DB_PASS=""
-  - DB_DIALECT=sqlite DB_NAME=wikilab_test
 
 before_script:
   - mysql -e 'create database wikilab_test;'
