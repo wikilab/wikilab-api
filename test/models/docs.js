@@ -1,4 +1,4 @@
-describe('Model.Doc', function() {
+describe.only('Model.Doc', function() {
   beforeEach(function() {
     return fixtures.load(['docs', 'collections']);
   });
@@ -9,6 +9,7 @@ describe('Model.Doc', function() {
         title: 'new doc',
         content: 'new content'
       }).then(function(doc) {
+        console.log(doc.parentUUID);
         expect(doc).to.have.property('UUID');
         expect(doc).to.not.have.property('parentUUID');
       });
@@ -45,7 +46,7 @@ describe('Model.Doc', function() {
       return Doc.createWithTransaction({
         title: 'new title',
         content: '',
-        parentUUID: 'not exists'
+        parentUUID: require('node-uuid').v4()
       }).then(function() {
         throw new Error('should reject');
       }).catch(function(err) {
