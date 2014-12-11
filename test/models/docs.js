@@ -1,4 +1,4 @@
-describe.only('Model.Doc', function() {
+describe('Model.Doc', function() {
   beforeEach(function() {
     return fixtures.load(['docs', 'collections']);
   });
@@ -9,9 +9,9 @@ describe.only('Model.Doc', function() {
         title: 'new doc',
         content: 'new content'
       }).then(function(doc) {
-        console.log(doc.parentUUID);
         expect(doc).to.have.property('UUID');
-        expect(doc).to.not.have.property('parentUUID');
+        /* jshint expr:true */
+        expect(doc.parentUUID).to.not.exist;
       });
     });
 
