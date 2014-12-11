@@ -21,7 +21,18 @@ describe('Model.Doc', function() {
     return doc.save();
   });
 
-  describe('#createWithTransaction()', function() {
+  describe('.createWithTransaction()', function() {
+    it('should reject is CollectionId is not specified', function() {
+      return Doc.createWithTransaction({
+        title: 'new doc',
+        content: 'new content'
+      }).then(function(doc) {
+        throw new Error('should reject');
+      }).catch(function(err) {
+        expect(err.message).to.eql('CollectionId is not specified');
+      });
+    });
+
     it('should have a default UUID and null parentUUID', function() {
       return Doc.createWithTransaction({
         title: 'new doc',
@@ -128,6 +139,18 @@ describe('Model.Doc', function() {
           expect(oldDoc.current).to.eql(true);
           Doc.create.restore();
         });
+      });
+    });
+  });
+
+  describe('#setParent()', function() {
+    it('should update the parent of document', function() {
+      var doc = fixtures.docs[0];
+      var parentDoc = fixtures.docs[1];
+      return fixtures.collections[0].addDocs([doc, parentDoc]).then(function() {
+        return doc.setParent(parentDoc.UUID);
+      }).then(function() {
+        return expect(doc.reload()).to.eventually.have.property('parentUUID', parentDoc.UUID);
       });
     });
   });
