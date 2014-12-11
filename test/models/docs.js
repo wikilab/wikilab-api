@@ -25,7 +25,8 @@ describe('Model.Doc', function() {
     it('should have a default UUID and null parentUUID', function() {
       return Doc.createWithTransaction({
         title: 'new doc',
-        content: 'new content'
+        content: 'new content',
+        CollectionId: fixtures.collections[0].id
       }).then(function(doc) {
         expect(doc).to.have.property('UUID');
         /* jshint expr:true */
@@ -39,7 +40,8 @@ describe('Model.Doc', function() {
       return Doc.createWithTransaction({
         UUID: oldDoc.UUID,
         title: 'new title',
-        content: 'new content'
+        content: 'new content',
+        CollectionId: fixtures.collections[0].id
       }).then(function(doc) {
         newDoc = doc;
         return oldDoc.reload();
@@ -54,7 +56,8 @@ describe('Model.Doc', function() {
       return Doc.createWithTransaction({
         UUID: oldDoc.UUID,
         title: 'new title',
-        content: ''
+        content: '',
+        CollectionId: fixtures.collections[0].id
       }).then(function(doc) {
         expect(doc.distance).to.eql(oldDoc.content.length);
       });
@@ -64,7 +67,8 @@ describe('Model.Doc', function() {
       return Doc.createWithTransaction({
         title: 'new title',
         content: '',
-        parentUUID: uuid()
+        parentUUID: uuid(),
+        CollectionId: fixtures.collections[0].id
       }).then(function() {
         throw new Error('should reject');
       }).catch(function(err) {
@@ -114,7 +118,8 @@ describe('Model.Doc', function() {
       return Doc.createWithTransaction({
         UUID: oldDoc.UUID,
         title: 'new title',
-        content: 'new content'
+        content: 'new content',
+        CollectionId: fixtures.collections[0].id
       }).then(function() {
         throw new Error('should reject');
       }).catch(function(err) {

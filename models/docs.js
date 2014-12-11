@@ -47,24 +47,14 @@ module.exports = function(DataTypes) {
     classMethods: {
       createWithTransaction: function(doc) {
         var _this = this;
+        if (!doc.CollectionId) {
+          return Promise.reject(new Error('CollectionId is not specified'));
+        }
         return sequelize.transaction().then(function(t) {
           var promise = Promise.resolve();
           if (doc.parentUUID) {
             promise = promise.then(function() {
-              return Doc.find({
-                where: { UUID: doc.parentUUID },
-                attributes: ['UUID', 'CollectionId']
-              }, {
-                transaction: t,
-                lock: t.LOCK.UPDATE
-              }).then(function(parentDoc) {
-                if (!parentDoc) {
-                  throw new Error('Parent document not exists');
-                }
-                if (parentDoc.CollectionId !== doc.CollectionId) {
-                  throw new Error('Parent document should belong to the same collection');
-                }
-              });
+              return checkParent(doc.parentUUID, doc.CollectionId, t);
             });
           }
           promise = promise.then(function() {
@@ -100,7 +90,46 @@ module.exports = function(DataTypes) {
       }
     },
     instanceMethods: {
-
+      setParent: function(parentUUID) {
+        var _this = this;
+        return sequelize.transaction().then(function(t) {
+          var promise = Promise.resolve();
+          promise = promise.then(function() {
+            return checkParent(parentUUID, _this.CollectionId, t);
+          });
+          return promise.then(function() {
+            return _this.updateAttributes({
+              parentUUID: parentUUID
+            }, {
+              transaction: t,
+              silent: true
+            });
+          }).then(function(doc) {
+            t.commit();
+            return doc;
+          }).catch(function(err) {
+            t.rollback();
+            throw err;
+          });
+        });
+      }
     }
   }];
 };
+
+function checkParent(parentUUID, collectionId, t) {
+  return Doc.find({
+    where: { UUID: parentUUID },
+    attributes: ['UUID', 'CollectionId']
+  }, {
+    transaction: t,
+    lock: t.LOCK.UPDATE
+  }).then(function(parentDoc) {
+    if (!parentDoc) {
+      throw new Error('Parent document not exists');
+    }
+    if (parentDoc.CollectionId !== collectionId) {
+      throw new Error('Parent document should belong to the same collection');
+    }
+  });
+}
