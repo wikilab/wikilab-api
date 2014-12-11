@@ -19,7 +19,8 @@ exports.load = function(specificFixtures) {
     });
     return Promise.all(promises);
   }).catch(function(err) {
-    console.error(err.stack);
+    console.error(err);
+    process.exit(1);
   });
 };
 

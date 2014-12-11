@@ -20,7 +20,7 @@ describe('Model.User', function() {
       });
     });
 
-    describe('#updatePassword', function() {
+    describe('#updatePassword()', function() {
       it('should update the password hashed', function() {
         var user = fixtures.users[0];
         return user.updatePassword('new password').then(function(user) {

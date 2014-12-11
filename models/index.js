@@ -1,4 +1,5 @@
 var Sequelize = require('sequelize');
+
 var inflection = require('inflection');
 
 $config.database.logging = $config.database.log ? console.log : false;
@@ -29,5 +30,8 @@ self.Team.hasMany(self.User, { constraints: false });
 
 self.Project.hasMany(self.Team, { through: self.ProjectTeam, constraints: false });
 self.Team.hasMany(self.Project, { through: self.ProjectTeam, constraints: false });
+
+self.Collection.hasMany(self.Doc);
+self.Doc.belongsTo(self.Collection);
 
 self.sequelize = self.DB = sequelize;

@@ -2,7 +2,8 @@ exports.load = function() {
   var docs = [
     Doc.build({
       title: 'title0',
-      content: 'content0'
+      content: 'content0',
+      hierarchyLevel: 1
     }),
     Doc.build({
       title: 'title1',
