@@ -5,7 +5,7 @@ describe('POST /teams', function() {
     });
   });
 
-  it('should return 403 if isnot owner', function() {
+  it('should return 403 if is not owner', function() {
     var user = fixtures.users[1];
     return api.$auth(user.email, user.password).teams.post().then(function() {
       throw new Error('should reject');

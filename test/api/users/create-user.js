@@ -16,7 +16,7 @@ describe('POST /users', function() {
     });
   });
 
-  it('should return 403 signing up is disabled', function() {
+  it('should return 403 when signing up is disabled', function() {
     return Setting.set('enableSignUp', false).then(function() {
       return api.users.post({
         name: 'Tom',

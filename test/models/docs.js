@@ -5,7 +5,7 @@ describe('Model.Doc', function() {
     return fixtures.load(['docs', 'collections']);
   });
 
-  it('should reject if when update parentUUID outside a transaction', function() {
+  it('should reject when update parentUUID outside a transaction', function() {
     var doc = fixtures.docs[0];
     var oldParentUUID = doc.parentUUID;
     return doc.updateAttributes({ parentUUID: uuid() }).then(function() {
@@ -151,6 +151,23 @@ describe('Model.Doc', function() {
         return doc.setParent(parentDoc.UUID);
       }).then(function() {
         return expect(doc.reload()).to.eventually.have.property('parentUUID', parentDoc.UUID);
+      });
+    });
+
+    it('should rollback when creation fails', function() {
+      var doc = fixtures.docs[0];
+      var previousParentUUID = doc.parentUUID;
+      var parentDoc = fixtures.docs[1];
+      return fixtures.collections[0].addDocs([doc, parentDoc]).then(function() {
+        sinon.stub(doc, 'save', function() {
+          return Promise.reject(new Error('reject'));
+        });
+        return doc.setParent(parentDoc.UUID);
+      }).then(function() {
+        throw new Error('should reject');
+      }).catch(function(err) {
+        expect(err.message).to.eql('reject');
+        return expect(doc.reload()).to.eventually.have.property('parentUUID', previousParentUUID);
       });
     });
   });
