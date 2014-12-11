@@ -1,6 +1,24 @@
+var uuid = require('node-uuid').v4;
+
 describe('Model.Doc', function() {
   beforeEach(function() {
     return fixtures.load(['docs', 'collections']);
+  });
+
+  it('should reject if when update parentUUID outside a transaction', function() {
+    var doc = fixtures.docs[0];
+    var oldParentUUID = doc.parentUUID;
+    return doc.updateAttributes({ parentUUID: uuid() }).then(function() {
+      throw new Error('should reject');
+    }).catch(function(err) {
+      expect(err.message).to.eql('Updating the parentUUID should within a transaction');
+    });
+  });
+
+  it('should update successfully when parentUUID is not touched', function() {
+    var doc = fixtures.docs[0];
+    doc.title = 'updated doc';
+    return doc.save();
   });
 
   describe('#createWithTransaction()', function() {
@@ -46,7 +64,7 @@ describe('Model.Doc', function() {
       return Doc.createWithTransaction({
         title: 'new title',
         content: '',
-        parentUUID: require('node-uuid').v4()
+        parentUUID: uuid()
       }).then(function() {
         throw new Error('should reject');
       }).catch(function(err) {

@@ -36,6 +36,14 @@ module.exports = function(DataTypes) {
       }
     }
   }, {
+    hooks: {
+      beforeUpdate: function(doc, options) {
+        if (options.fields.indexOf('parentUUID') !== -1 &&
+            !options.transaction) {
+          return Promise.reject(new Error('Updating the parentUUID should within a transaction'));
+        }
+      }
+    },
     classMethods: {
       createWithTransaction: function(doc) {
         var _this = this;
@@ -90,6 +98,9 @@ module.exports = function(DataTypes) {
           });
         });
       }
+    },
+    instanceMethods: {
+
     }
   }];
 };
