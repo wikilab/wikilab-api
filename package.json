@@ -20,10 +20,6 @@
     "url": "https://github.com/wikilab/wikilab-model/issues"
   },
   "homepage": "https://github.com/wikilab/wikilab-model",
-  "jshintConfig": {
-    "esnext": true,
-    "noyield": true
-  },
   "dependencies": {
     "async": "^0.9.0",
     "basic-auth": "^1.0.0",
@@ -39,12 +35,12 @@
     "node-require-directory": "^1.0.2",
     "pg": "^4.1.0",
     "sequelize": "^2.0.0-rc3",
-    "sqlite3": "^3.0.4",
-    "tree-model": "^0.4.3"
+    "sqlite3": "^3.0.4"
   },
   "devDependencies": {
     "chai": "^1.10.0",
     "chai-as-promised": "^4.1.1",
+    "codeclimate-test-reporter": "0.0.4",
     "istanbul": "^0.3.5",
     "istanbul-harmony": "^0.3.1",
     "mocha": "^2.0.1",

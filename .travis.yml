@@ -20,7 +20,7 @@ before_script:
   - psql -c 'create database wikilab_test;' -U postgres
 
 after_success:
-  - cat ./coverage/lcov.info | codeclimate
+  - cat ./coverage/lcov.info | ./node_modules/.bin/codeclimate
 
 cache:
   directories:
