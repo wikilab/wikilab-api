@@ -1,4 +1,4 @@
-describe.only('Model.Doc', function() {
+describe('Model.Doc', function() {
   beforeEach(function() {
     return fixtures.load(['docs', 'collections']);
   });
