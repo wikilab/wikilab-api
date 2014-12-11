@@ -46,8 +46,4 @@ app.use(function *(next) {
 
 require('./routes')(app);
 
-if (require.main === module) {
-  app.listen($config.port || 4000);
-} else {
-  module.exports = app;
-}
+module.exports = app;

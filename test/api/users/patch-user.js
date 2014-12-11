@@ -25,9 +25,10 @@ describe('PATCH /users/:user', function() {
     var user = fixtures.users[0];
     return api.$auth(user.email, user.password).users(user.id).patch({
       name: 'updated name'
-    }).then(function(user) {
-      expect(user).to.have.property('name', 'updated name');
-      expect(user).to.have.property('email', user.email);
+    }).then(function(returnedUser) {
+      expect(returnedUser).to.have.property('name', 'updated name');
+      expect(returnedUser).to.have.property('email', user.email);
+      return expect(user.reload()).to.eventually.have.property('name', 'updated name');
     });
   });
 

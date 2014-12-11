@@ -30,19 +30,14 @@ router.patch('/:user', function *(next) {
   this.assert(this.me.id === this.user.id, 403);
 
   var properties = ['name', 'email'];
-  var changedProperty = {};
   var _this = this;
   properties.forEach(function(property) {
-    if (typeof _this.request.body[property] === 'string' && _this.user[property] !== _this.request.body[property]) {
-      changedProperty[property] = _this.request.body[property];
+    if (typeof _this.request.body[property] !== 'undefined') {
+      _this.user[property] = _this.request.body[property];
     }
   });
 
-  if (Object.keys(changedProperty).length > 0) {
-    this.body = yield this.user.updateAttributes(changedProperty);
-  } else {
-    this.body = this.user;
-  }
+  this.body = yield this.user.save();
 });
 
 router.put('/:user/password', function *(next) {
