@@ -1,7 +1,7 @@
 {
-  "name": "wikilab-model",
+  "name": "wikilab-api",
   "version": "1.0.0",
-  "description": "The model layer of WikiLab",
+  "description": "The API of WikiLab",
   "main": "index.js",
   "scripts": {
     "test": "NODE_ENV=test mocha --harmony",

@@ -1,7 +1,7 @@
 wikilab-api
 =============
 
-The API layer of WikiLab
+WikiLab API
 
 ![Build Status](https://travis-ci.org/wikilab/wikilab-api.svg?branch=master)
 [![Code Climate](https://codeclimate.com/github/wikilab/wikilab-api/badges/gpa.svg)](https://codeclimate.com/github/wikilab/wikilab-api)
