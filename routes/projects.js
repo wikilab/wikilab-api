@@ -48,3 +48,18 @@ router.get('/', function *() {
 
   this.body = projects;
 });
+
+router.param('projectId', function *(id, next) {
+  this.project = yield Project.find(id);
+  this.assert(this.project, 404);
+});
+
+router.get('/:projectId', function *() {
+  this.assert(this.me.havePermission(this.project, 'read'), 403);
+
+  var collections = yield this.project.getCollections();
+
+  this.project.setDataValue('collections', collections);
+
+  this.body = this.project;
+});

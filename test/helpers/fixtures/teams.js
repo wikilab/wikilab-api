@@ -1,28 +1,22 @@
 exports.load = function() {
   var teams = [
     Team.build({
-      name: 'Owner',
-      type: 'owner'
+      name: 'Owner'
     }),
     Team.build({
-      name: 'User1',
-      type: 'user'
+      name: 'User1'
     }),
     Team.build({
-      name: 'User2',
-      type: 'user'
+      name: 'User2'
     }),
     Team.build({
-      name: 'User3',
-      type: 'user'
+      name: 'User3'
     }),
     Team.build({
-      name: 'User4',
-      type: 'user'
+      name: 'User4'
     }),
     Team.build({
-      name: 'User5',
-      type: 'user'
+      name: 'User5'
     })
   ];
 

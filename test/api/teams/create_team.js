@@ -5,7 +5,7 @@ describe('POST /teams', function() {
     });
   });
 
-  it('should return 403 if is not owner', function() {
+  it('should return 403 if is not admin', function() {
     var user = fixtures.users[1];
     return api.$auth(user.email, user.password).teams.post().then(function() {
       throw new Error('should reject');
@@ -30,7 +30,6 @@ describe('POST /teams', function() {
       name: 'team name'
     }).then(function(team) {
       expect(team).to.have.property('name', 'team name');
-      expect(team).to.have.property('type', 'user');
     });
   });
 });

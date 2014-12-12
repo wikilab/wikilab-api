@@ -19,9 +19,7 @@ router.param('user', function *(id, next) {
   } else {
     this.user = yield User.find(id);
   }
-  this.assert(this.user, 404, {
-    error: 'Not Found'
-  });
+  this.assert(this.user, 404);
   yield next;
 });
 

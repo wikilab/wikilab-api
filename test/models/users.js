@@ -38,4 +38,7 @@ describe('Model.User', function() {
       });
     });
   });
+
+  describe('#havePermission', function() {
+  });
 });
