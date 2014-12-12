@@ -24,6 +24,9 @@ app.use(function *(next) {
       this.body = {
         error: err.error
       };
+      if (this.status === 500) {
+        console.error(err.stack);
+      }
     }
   }
 });

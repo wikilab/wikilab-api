@@ -39,6 +39,41 @@ describe('Model.User', function() {
     });
   });
 
-  describe('#havePermission', function() {
+  describe('#havePermission()', function() {
+    beforeEach(function() {
+      return Promise.all([
+        fixtures.users[0].addTeams([
+          fixtures.teams[1],
+          fixtures.teams[2],
+          fixtures.teams[3]
+        ]),
+        fixtures.teams[1].addProjects([
+          fixtures.projects[0]
+        ], { permission: 'read' }),
+        fixtures.teams[2].addProjects([
+          fixtures.projects[1],
+          fixtures.projects[2]
+        ], { permission: 'write' }),
+        fixtures.teams[3].addProjects([
+          fixtures.projects[1],
+        ], { permission: 'admin' })
+      ]);
+    });
+
+    it('should return the correct result', function() {
+      var user = fixtures.users[0];
+      var projects = fixtures.projects;
+      return Promise.all([
+        expect(user.havePermission(projects[0], 'read')).to.become(true),
+        expect(user.havePermission(projects[0], 'write')).to.become(false),
+        expect(user.havePermission(projects[0], 'admin')).to.become(false),
+        expect(user.havePermission(projects[1], 'read')).to.become(true),
+        expect(user.havePermission(projects[1], 'write')).to.become(true),
+        expect(user.havePermission(projects[1], 'admin')).to.become(true),
+        expect(user.havePermission(projects[2], 'admin')).to.become(false),
+        expect(user.havePermission(projects[3], 'read')).to.become(false),
+        expect(user.havePermission(projects[3], 'admin')).to.become(false)
+      ]);
+    });
   });
 });

@@ -72,7 +72,4 @@ describe('GET /projects', function() {
       });
     });
   });
-
-//   describe('?field=:field1,field2', function() {
-//   });
 });

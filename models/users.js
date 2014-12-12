@@ -84,6 +84,22 @@ module.exports = function(DataTypes) {
           _this.password = hash;
           return _this.save(['password']);
         });
+      },
+      havePermission: function(project, level) {
+        return this.getTeams({ attributes: ['id'] }).then(function(teams) {
+          var teamIds = teams.map(function(team) {
+            return team.id;
+          });
+          return project.getTeams({
+            where: { id: teamIds },
+            attributes: []
+          }).then(function(teams) {
+            return teams.some(function(team) {
+              var permission = team.ProjectTeam.permission;
+              return ProjectTeam.higherPermission(permission, level) === permission;
+            });
+          });
+        });
       }
     }
   }];

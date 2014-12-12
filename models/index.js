@@ -31,4 +31,7 @@ self.Team.hasMany(self.Project, { through: self.ProjectTeam, constraints: false 
 self.Collection.hasMany(self.Doc);
 self.Doc.belongsTo(self.Collection);
 
+self.Project.hasMany(self.Collection);
+self.Collection.belongsTo(self.Project);
+
 self.sequelize = self.DB = sequelize;

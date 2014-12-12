@@ -56,3 +56,10 @@ Get all projects which the current user has access to
 
 [Test](test/api/projects/get-projects.js)
 [Code](routes/projects.js)
+
+#### GET /projects/:projectId
+
+Get the specified project info
+
+[Test](test/api/projects/get-project.js)
+[Code](routes/projects.js)

@@ -10,6 +10,7 @@ module.exports = function(DataTypes) {
       allowNull: false
     }
   }, {
+    timestamps: false,
     classMethods: {
       higherPermission: function() {
         var permissions = Array.prototype.slice.call(arguments);
