@@ -1,4 +1,5 @@
-var bcrypt = require('bcrypt');
+var promisify = require('promisify-node');
+var bcrypt = promisify('bcrypt');
 var Instance = require('../node_modules/sequelize/lib/instance.js');
 
 module.exports = function(DataTypes) {
@@ -27,18 +28,11 @@ module.exports = function(DataTypes) {
   }, {
     hooks: {
       beforeCreate: function(user) {
-        if (!$config.bcryptRound) {
-          return;
-        }
-        return new Promise(function(resolve, reject) {
-          bcrypt.hash(user.password, $config.bcryptRound, function(err, hash) {
-            if (err) {
-              return reject(err);
-            }
+        if ($config.bcryptRound) {
+          return bcrypt.hash(user.password, $config.bcryptRound).then(function(hash) {
             user.password = hash;
-            resolve();
           });
-        });
+        }
       }
     },
     instanceMethods: {
@@ -50,34 +44,17 @@ module.exports = function(DataTypes) {
         return ret;
       },
       comparePassword: function(password) {
-        if (!$config.bcryptRound) {
-          return Promise.resolve(this.password === password);
+        if ($config.bcryptRound) {
+          return bcrypt.compare(password, this.password);
         }
-        var currentPassword = this.password;
-        return new Promise(function(resolve, reject) {
-          bcrypt.compare(password, currentPassword , function(err, res) {
-            if (err) {
-              reject(err);
-            } else {
-              resolve(res);
-            }
-          });
-        });
+        return Promise.resolve(this.password === password);
       },
       updatePassword: function(newPassword) {
         var hashPassword;
-        if (!$config.bcryptRound) {
-          hashPassword = Promise.resolve(newPassword);
+        if ($config.bcryptRound) {
+          hashPassword = bcrypt.hash(newPassword, $config.bcryptRound);
         } else {
-          hashPassword = new Promise(function(resolve, reject) {
-            bcrypt.hash(newPassword, $config.bcryptRound, function(err, hash) {
-              if (err) {
-                reject(err);
-              } else {
-                resolve(hash);
-              }
-            });
-          });
+          hashPassword = Promise.resolve(newPassword);
         }
         var _this = this;
         return hashPassword.then(function(hash) {
