@@ -1,17 +1,16 @@
 var router = module.exports = new (require('koa-router'))();
 
 router.post('/', function *() {
-  var hasOwnerTeam = (yield Team.count({ where: { type: 'owner' } })) !== 0;
+  var isFirstUser = (yield User.count()) === 0;
 
-  var allowSignUp = !hasOwnerTeam || (yield Setting.get('enableSignUp', true));
+  var allowSignUp = isFirstUser || (yield Setting.get('enableSignUp', true));
   this.assert(allowSignUp, 403, 'Sign up is disabled');
 
-  var user = yield User.create(this.request.body);
-  if (!hasOwnerTeam) {
-    var ownerTeam = yield Team.create({ name: 'Owner', type: 'owner' });
-    yield user.addTeam(ownerTeam);
+  var user = User.build(this.request.body);
+  if (isFirstUser) {
+    user.isAdmin = true;
   }
-  this.body = user;
+  this.body = yield user.save();
 });
 
 router.param('user', function *(id, next) {

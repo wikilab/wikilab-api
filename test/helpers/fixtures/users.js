@@ -3,7 +3,8 @@ exports.load = function() {
     User.build({
       email: 'bob@email.com',
       name: 'Bob',
-      password: 'bobpassword'
+      password: 'bobpassword',
+      isAdmin: true
     }),
     User.build({
       email: 'jeff@email.com',

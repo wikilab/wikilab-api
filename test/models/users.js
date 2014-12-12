@@ -38,16 +38,4 @@ describe('Model.User', function() {
       });
     });
   });
-
-  describe('#isOwner()', function() {
-    it('should return the correct value', function() {
-      var user = fixtures.users[0];
-      expect(user.isOwner()).to.become(false);
-      return user.addTeam(fixtures.teams[0]).then(function() {
-        return user.reload().then(function() {
-          return expect(user.isOwner()).to.become(true);
-        });
-      });
-    });
-  });
 });

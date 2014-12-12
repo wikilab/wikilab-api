@@ -12,11 +12,12 @@ describe('POST /users', function() {
       expect(user).to.have.property('id');
       expect(user).to.have.property('name', 'Tom');
       expect(user).to.have.property('email', 'tom@email.com');
+      expect(user).to.have.have.property('isAdmin', false);
       expect(user).to.not.have.property('password');
     });
   });
 
-  it('should return 403 when signing up is disabled', function() {
+  it.only('should return 403 when signing up is disabled', function() {
     return Setting.set('enableSignUp', false).then(function() {
       return api.users.post({
         name: 'Tom',
@@ -41,7 +42,7 @@ describe('POST /users', function() {
     });
   });
 
-  it('should become the owner if one is the first user', function() {
+  it('should become admin if one is the first user', function() {
     return fixtures.unload().then(function() {
       return api.users.post({
         name: 'Tom',
@@ -49,11 +50,9 @@ describe('POST /users', function() {
         password: '123'
       }).then(function(user) {
         return User.find({
-          where: { id: user.id },
-          include: [{ model: Team }]
+          where: { id: user.id }
         }).then(function(user) {
-          expect(user.Teams).to.have.length(1);
-          expect(user.Teams[0]).to.have.property('type', 'owner');
+          expect(user.isAdmin).to.eql(true);
         });
       });
     });

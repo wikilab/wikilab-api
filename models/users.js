@@ -18,6 +18,11 @@ module.exports = function(DataTypes) {
     name: {
       type: DataTypes.STRING,
       allowNull: false
+    },
+    isAdmin: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false
     }
   }, {
     hooks: {
@@ -78,11 +83,6 @@ module.exports = function(DataTypes) {
         return hashPassword.then(function(hash) {
           _this.password = hash;
           return _this.save(['password']);
-        });
-      },
-      isOwner: function() {
-        return this.getTeams({ where: { type: 'owner' } }).then(function(teams) {
-          return teams.length > 0;
         });
       }
     }
