@@ -37,81 +37,53 @@ module.exports = function(DataTypes) {
     }
   }, {
     hooks: {
-      beforeUpdate: function(doc, options) {
-        if (options.fields.indexOf('parentUUID') !== -1 &&
-            !options.transaction) {
-          return Promise.reject(new Error('Updating the parentUUID should within a transaction'));
+      beforeUpdate: function *(doc, options) {
+        if (options.fields.indexOf('parentUUID') !== -1 && !options.transaction) {
+          throw new Error('Updating the parentUUID should within a transaction');
         }
       }
     },
     classMethods: {
-      createWithTransaction: function(doc) {
-        var _this = this;
+      createWithTransaction: function *(doc) {
         if (!doc.CollectionId) {
-          return Promise.reject(new Error('CollectionId is not specified'));
+          throw new Error('CollectionId is not specified');
         }
-        return sequelize.transaction().then(function(t) {
-          var promise = Promise.resolve();
+        var t = yield sequelize.transaction();
+        try {
           if (doc.parentUUID) {
-            promise = promise.then(function() {
-              return checkParent(doc.parentUUID, doc.CollectionId, t);
-            });
+            yield checkParent(doc.parentUUID, doc.CollectionId, t);
           }
-          promise = promise.then(function() {
-            return Doc.find({
-              where: { UUID: doc.UUID, current: true },
-              attributes: ['id', 'content', 'current']
-            }, {
-              transaction: t,
-              lock: t.LOCK.UPDATE
-            }).then(function(prevDoc) {
-              if (prevDoc) {
-                doc.distance = natural.LevenshteinDistance(doc.content, prevDoc.content);
-                return prevDoc.updateAttributes({
-                  current: false
-                }, {
-                  fields: ['current'],
-                  silent: true,
-                  transaction: t
-                });
-              }
-            });
+          var prevDoc = yield Doc.find({
+            where: { UUID: doc.UUID, current: true },
+            attributes: ['id', 'content', 'current']
+          }, {
+            transaction: t,
+            lock: t.LOCK.UPDATE
           });
-          return promise.then(function() {
-            return _this.create(doc, { transaction: t });
-          }).then(function(doc) {
-            t.commit();
-            return doc;
-          }).catch(function(err) {
-            t.rollback();
-            throw err;
-          });
-        });
+          if (prevDoc) {
+            doc.distance = natural.LevenshteinDistance(doc.content, prevDoc.content);
+            yield prevDoc.updateAttributes({ current: false }, { fields: ['current'], silent: true, transaction: t });
+          }
+          var createdDoc = yield this.create(doc, { transaction: t });
+          t.commit();
+          return createdDoc ;
+        } catch (err) {
+          t.rollback();
+          throw err;
+        }
       }
     },
     instanceMethods: {
-      setParent: function(parentUUID) {
-        var _this = this;
-        return sequelize.transaction().then(function(t) {
-          var promise = Promise.resolve();
-          promise = promise.then(function() {
-            return checkParent(parentUUID, _this.CollectionId, t);
-          });
-          return promise.then(function() {
-            return _this.updateAttributes({
-              parentUUID: parentUUID
-            }, {
-              transaction: t,
-              silent: true
-            });
-          }).then(function(doc) {
-            t.commit();
-            return doc;
-          }).catch(function(err) {
-            t.rollback();
-            throw err;
-          });
-        });
+      setParent: function *(parentUUID) {
+        var t = yield sequelize.transaction();
+        try {
+          yield checkParent(parentUUID, this.CollectionId, t);
+          yield this.updateAttributes({ parentUUID: parentUUID }, { transaction: t, silent: true });
+          t.commit();
+        } catch (err) {
+          t.rollback();
+          throw err;
+        }
       }
     }
   }];

@@ -18,7 +18,7 @@ describe('GET /projects/:projectId', function() {
     });
   });
 
-  it('should return 403 when the user don\'t have permission', function() {
+  it('should return 403 when the user don\'t have read permission', function() {
     var user = fixtures.users[1];
     var project = fixtures.projects[0];
     return api.$auth(user.email, user.password).projects(project.id).get().then(function() {
@@ -35,6 +35,8 @@ describe('GET /projects/:projectId', function() {
       expect(returnedProject).to.have.property('id', project.id);
       expect(returnedProject).to.have.property('name', project.name);
       expect(returnedProject.collections).to.have.length(2);
+    }).catch(function(err) {
+      console.log(err.statusCode);
     });
   });
 });

@@ -27,11 +27,9 @@ module.exports = function(DataTypes) {
     }
   }, {
     hooks: {
-      beforeCreate: function(user) {
+      beforeCreate: function *(user) {
         if ($config.bcryptRound) {
-          return bcrypt.hash(user.password, $config.bcryptRound).then(function(hash) {
-            user.password = hash;
-          });
+          user.password = yield bcrypt.hash(user.password, $config.bcryptRound);
         }
       }
     },
@@ -43,40 +41,38 @@ module.exports = function(DataTypes) {
         delete ret.password;
         return ret;
       },
-      comparePassword: function(password) {
+      comparePassword: function *(password) {
         if ($config.bcryptRound) {
-          return bcrypt.compare(password, this.password);
+          return yield bcrypt.compare(password, this.password);
         }
-        return Promise.resolve(this.password === password);
+        return this.password === password;
       },
-      updatePassword: function(newPassword) {
+      updatePassword: function *(newPassword) {
         var hashPassword;
         if ($config.bcryptRound) {
-          hashPassword = bcrypt.hash(newPassword, $config.bcryptRound);
+          hashPassword = yield bcrypt.hash(newPassword, $config.bcryptRound);
         } else {
-          hashPassword = Promise.resolve(newPassword);
+          hashPassword = newPassword;
         }
-        var _this = this;
-        return hashPassword.then(function(hash) {
-          _this.password = hash;
-          return _this.save(['password']);
-        });
+        this.password = hashPassword ;
+        return yield this.save(['password']);
       },
-      havePermission: function(project, level) {
-        return this.getTeams({ attributes: ['id'] }).then(function(teams) {
-          var teamIds = teams.map(function(team) {
-            return team.id;
-          });
-          return project.getTeams({
-            where: { id: teamIds },
-            attributes: []
-          }).then(function(teams) {
-            return teams.some(function(team) {
-              var permission = team.ProjectTeam.permission;
-              return ProjectTeam.higherPermission(permission, level) === permission;
-            });
-          });
+      getPermission: function *(project) {
+        var teams = yield this.getTeams({ attributes: ['id'] });
+        var teamIds = teams.map(function(team) {
+          return team.id;
         });
+        teams = yield project.getTeams({ where: { id: teamIds }, attributes: [] });
+        var highestPermission = null;
+        teams.forEach(function(team) {
+          var permission = team.ProjectTeam.permission;
+          highestPermission = ProjectTeam.higherPermission(highestPermission, permission);
+        });
+        return highestPermission;
+      },
+      havePermission: function *(project, expectedPermission) {
+        var permission = yield this.getPermission(project);
+        return ProjectTeam.higherPermission(permission, expectedPermission) === permission;
       }
     }
   }];

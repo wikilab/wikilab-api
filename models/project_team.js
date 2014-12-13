@@ -15,7 +15,7 @@ module.exports = function(DataTypes) {
       higherPermission: function() {
         var permissions = Array.prototype.slice.call(arguments);
         var min = Math.min.apply(Math, permissions.map(function(permission) {
-          return PERMISSION[permission];
+          return PERMISSION[permission] || Number.MAX_VALUE;
         }));
         return Object.keys(PERMISSION).find(function(key) {
           return PERMISSION[key] === min;

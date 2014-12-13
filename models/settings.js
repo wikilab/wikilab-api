@@ -11,28 +11,26 @@ module.exports = function(DataTypes) {
     }
   }, {
     classMethods: {
-      set: function(key, value) {
+      set: function *(key, value) {
         value = JSON.stringify(value);
-        return this.findOrCreate({
+        var pair = (yield this.findOrCreate({
           where: { key: key },
           defaults: { value: value }
-        }).spread(function(instance, isNew) {
-          if (!isNew && instance.value !== value) {
-            instance.value = value;
-            return instance.save();
-          }
-          return instance;
-        });
+        }))[0];
+        if (pair.value !== value) {
+          pair.value = value;
+          yield pair.save();
+        }
+        return pair;
       },
-      get: function(key, defaults) {
-        return this.find({ where: { key: key } }).then(function(instance) {
-          if (instance) {
-            return JSON.parse(instance.value);
-          }
-          if (typeof defaults !== 'undefined') {
-            return defaults;
-          }
-        });
+      get: function *(key, defaults) {
+        var pair = yield this.find({ where: { key: key } });
+        if (pair) {
+          return JSON.parse(pair.value);
+        }
+        if (typeof defaults !== 'undefined') {
+          return defaults;
+        }
       }
     }
   }, {
