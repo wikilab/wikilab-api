@@ -1,14 +1,10 @@
-exports.load = function() {
-  var collections = [
-    Collection.build({
+exports.load = function *() {
+  return [
+    yield Collection.create({
       name: 'collection0',
     }),
-    Collection.build({
+    yield Collection.create({
       name: 'collection1'
     })
   ];
-
-  return Promise.all(collections.map(function(collection) {
-    return collection.save();
-  }));
 };

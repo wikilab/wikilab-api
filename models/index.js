@@ -42,10 +42,10 @@ self.Team.hasMany(self.User, { constraints: false });
 self.Project.hasMany(self.Team, { through: self.ProjectTeam, constraints: false });
 self.Team.hasMany(self.Project, { through: self.ProjectTeam, constraints: false });
 
-self.Collection.hasMany(self.Doc);
-self.Doc.belongsTo(self.Collection);
+self.Collection.hasMany(self.Doc, { constraints: false });
+self.Doc.belongsTo(self.Collection, { constraints: false });
 
-self.Project.hasMany(self.Collection);
-self.Collection.belongsTo(self.Project);
+self.Project.hasMany(self.Collection, { constraints: false });
+self.Collection.belongsTo(self.Project, { constraints: false });
 
 self.sequelize = self.DB = sequelize;

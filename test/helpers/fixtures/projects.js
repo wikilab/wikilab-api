@@ -1,23 +1,19 @@
-exports.load = function() {
-  var projects = [
-    Project.build({
+exports.load = function *() {
+  return [
+    yield Project.create({
       name: 'project0',
     }),
-    Project.build({
+    yield Project.create({
       name: 'project1',
     }),
-    Project.build({
+    yield Project.create({
       name: 'project2',
     }),
-    Project.build({
+    yield Project.create({
       name: 'project3',
     }),
-    Project.build({
+    yield Project.create({
       name: 'project4',
     })
   ];
-
-  return Promise.all(projects.map(function(project) {
-    return project.save();
-  }));
 };

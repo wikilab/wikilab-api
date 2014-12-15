@@ -1,8 +1,8 @@
 var uuid = require('node-uuid').v4;
 
 describe('Model.Doc', function() {
-  beforeEach(function() {
-    return fixtures.load(['docs', 'collections']);
+  beforeEach(function *() {
+    yield fixtures.load(['docs', 'collections']);
   });
 
   it('should reject when update parentUUID outside a transaction', function() {
@@ -144,31 +144,53 @@ describe('Model.Doc', function() {
   });
 
   describe('#setParent()', function() {
-    it('should update the parent of document', function() {
+    it('should update the parent of document', function *() {
       var doc = fixtures.docs[0];
       var parentDoc = fixtures.docs[1];
-      return fixtures.collections[0].addDocs([doc, parentDoc]).then(function() {
-        return doc.setParent(parentDoc.UUID);
-      }).then(function() {
-        return expect(doc.reload()).to.eventually.have.property('parentUUID', parentDoc.UUID);
-      });
+      yield fixtures.collections[0].addDocs([doc, parentDoc]);
+      yield doc.setParent(parentDoc.UUID);
+      expect(yield doc.reload()).to.have.property('parentUUID', parentDoc.UUID);
     });
 
-    it('should rollback when creation fails', function() {
+    it('should rollback when creation fails', function *() {
       var doc = fixtures.docs[0];
       var previousParentUUID = doc.parentUUID;
       var parentDoc = fixtures.docs[1];
-      return fixtures.collections[0].addDocs([doc, parentDoc]).then(function() {
-        sinon.stub(doc, 'save', function() {
-          return Promise.reject(new Error('reject'));
-        });
-        return doc.setParent(parentDoc.UUID);
-      }).then(function() {
-        throw new Error('should reject');
-      }).catch(function(err) {
-        expect(err.message).to.eql('reject');
-        return expect(doc.reload()).to.eventually.have.property('parentUUID', previousParentUUID);
+      yield fixtures.collections[0].addDocs([doc, parentDoc]);
+      sinon.stub(doc, 'save', function() {
+        throw new Error('reject');
       });
+      try {
+        yield doc.setParent(parentDoc.UUID);
+        throw new Error('should reject');
+      } catch (err) {
+        expect(err.message).to.eql('reject');
+        expect(yield doc.reload()).to.have.property('parentUUID', previousParentUUID);
+      }
+    });
+  });
+
+  describe('#setOrder()', function() {
+    it('should update the order of document', function *() {
+      var collection = fixtures.collections[0];
+      var docs = fixtures.docs;
+      yield collection.addDocs(fixtures.docs);
+      var parentDoc = docs[0];
+      yield docs[1].setParent(parentDoc.UUID);
+      yield docs[2].setParent(docs[1].UUID);
+      yield docs[3].setParent(docs[1].UUID);
+      yield docs[4].setParent(docs[1].UUID);
+      yield docs[5].setParent(docs[1].UUID);
+      yield docs[2].setOrder(0);
+      yield docs[3].setOrder(1);
+      yield docs[4].setOrder(2);
+      yield docs[5].setOrder(3);
+      yield docs[4].setOrder(1);
+      var subDocs = yield Doc.findAll({
+        where: { parentUUID: docs[1].UUID },
+        order: '`order` ASC'
+      });
+      expect(subDocs.map(function(doc) { return doc.id; })).to.eql([3, 5, 4, 6]);
     });
   });
 });

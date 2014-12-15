@@ -1,18 +1,14 @@
-exports.load = function() {
-  var settings = [
-    Setting.build({
+exports.load = function *() {
+  return [
+    yield Setting.create({
       key: 'setting0',
       value: JSON.stringify(true)
     }),
-    Setting.build({
+    yield Setting.create({
       key: 'setting1',
       value: JSON.stringify({
         value: 'value1'
       })
     })
   ];
-
-  return Promise.all(settings.map(function(setting) {
-    return setting.save();
-  }));
 };

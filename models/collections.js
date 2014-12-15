@@ -6,9 +6,8 @@ module.exports = function(DataTypes) {
     }
   }, {
     instanceMethods: {
-      getDirs: function() {
-        var docs = this.getDocs({ attributes: ['UUID', 'parentUUID', 'title'] });
-
+      getDirs: function *() {
+        var docs = yield this.getDocs({ attributes: ['UUID', 'parentUUID', 'title'] });
         var treeDoc = {};
         docs = docs.map(function(doc) {
           doc = doc.dataValues;

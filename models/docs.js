@@ -34,6 +34,9 @@ module.exports = function(DataTypes) {
       validate: {
         isUUID: 4
       }
+    },
+    order: {
+      type: DataTypes.INTEGER
     }
   }, {
     hooks: {
@@ -79,6 +82,43 @@ module.exports = function(DataTypes) {
         try {
           yield checkParent(parentUUID, this.CollectionId, t);
           yield this.updateAttributes({ parentUUID: parentUUID }, { transaction: t, silent: true });
+          t.commit();
+        } catch (err) {
+          t.rollback();
+          throw err;
+        }
+      },
+      setOrder: function *(order) {
+        var t = yield sequelize.transaction();
+        try {
+          var docs = yield Doc.findAll({
+            where: { parentUUID: this.parentUUID },
+            attributes: ['id', 'order', 'createdAt']
+          }, {
+            transaction: t,
+            lock: t.LOCK.UPDATE
+          });
+          docs.sort(function(a, b) {
+            if (typeof a.order === 'number' && typeof b.order === 'number') {
+              return a.order - b.order;
+            } else {
+              return a.createdAt - b.createdAt;
+            }
+          });
+          var thisInstance, i;
+          for (i = 0; i < docs.length; ++i) {
+            if (docs[i].id === this.id) {
+              thisInstance = docs[i];
+              docs.splice(i, 1);
+              break;
+            }
+          }
+          docs.splice(order, 0, thisInstance);
+          for (i = 0; i < docs.length; ++i) {
+            if (docs[i].order !== i) {
+              yield docs[i].updateAttributes({ order: i }, { transaction: t, silent: true });
+            }
+          }
           t.commit();
         } catch (err) {
           t.rollback();

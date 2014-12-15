@@ -1,4 +1,5 @@
 --require env
 --require test/helpers/global
+--require co-mocha
 --reporter spec
 --recursive

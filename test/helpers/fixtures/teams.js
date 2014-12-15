@@ -1,26 +1,22 @@
-exports.load = function() {
-  var teams = [
-    Team.build({
+exports.load = function *() {
+  return [
+    yield Team.create({
       name: 'Owner'
     }),
-    Team.build({
+    yield Team.create({
       name: 'User1'
     }),
-    Team.build({
+    yield Team.create({
       name: 'User2'
     }),
-    Team.build({
+    yield Team.create({
       name: 'User3'
     }),
-    Team.build({
+    yield Team.create({
       name: 'User4'
     }),
-    Team.build({
+    yield Team.create({
       name: 'User5'
     })
   ];
-
-  return Promise.all(teams.map(function(team) {
-    return team.save();
-  }));
 };
