@@ -171,26 +171,31 @@ describe('Model.Doc', function() {
   });
 
   describe('#setOrder()', function() {
-    it('should update the order of document', function *() {
-      var collection = fixtures.collections[0];
-      var docs = fixtures.docs;
-      yield collection.addDocs(fixtures.docs);
-      var parentDoc = docs[0];
-      yield docs[1].setParent(parentDoc.UUID);
-      yield docs[2].setParent(docs[1].UUID);
-      yield docs[3].setParent(docs[1].UUID);
-      yield docs[4].setParent(docs[1].UUID);
-      yield docs[5].setParent(docs[1].UUID);
-      yield docs[2].setOrder(0);
-      yield docs[3].setOrder(1);
-      yield docs[4].setOrder(2);
-      yield docs[5].setOrder(3);
-      yield docs[4].setOrder(1);
-      var subDocs = yield Doc.findAll({
-        where: { parentUUID: docs[1].UUID },
-        order: '`order` ASC'
-      });
-      expect(subDocs.map(function(doc) { return doc.id; })).to.eql([3, 5, 4, 6]);
+    it.only('should update the order of document', function *() {
+      try {
+        var collection = fixtures.collections[0];
+        var docs = fixtures.docs;
+        yield collection.addDocs(fixtures.docs);
+        var parentDoc = docs[0];
+        yield docs[1].setParent(parentDoc.UUID);
+        yield docs[2].setParent(docs[1].UUID);
+        yield docs[3].setParent(docs[1].UUID);
+        yield docs[4].setParent(docs[1].UUID);
+        yield docs[5].setParent(docs[1].UUID);
+        yield docs[2].setOrder(0);
+        yield docs[3].setOrder(1);
+        yield docs[4].setOrder(2);
+        yield docs[5].setOrder(3);
+        yield docs[4].setOrder(1);
+        var subDocs = yield Doc.findAll({
+          where: { parentUUID: docs[1].UUID },
+          order: '`order` ASC'
+        });
+        expect(subDocs.map(function(doc) { return doc.id; })).to.eql([3, 5, 4, 6]);
+      } catch (err) {
+        console.log(err);
+        throw err;
+      }
     });
   });
 });
