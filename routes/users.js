@@ -4,7 +4,7 @@ router.post('/', function *() {
   var isFirstUser = (yield User.count()) === 0;
 
   var allowSignUp = isFirstUser || (yield Setting.get('enableSignUp', true));
-  this.assert(allowSignUp, 403, 'Sign up is disabled');
+  this.assert(allowSignUp, new HTTP_ERROR.NoPermission('Sign up is disabled'));
 
   var user = User.build(this.request.body);
   if (isFirstUser) {
@@ -19,12 +19,12 @@ router.param('user', function *(id, next) {
   } else {
     this.user = yield User.find(id);
   }
-  this.assert(this.user, 404);
+  this.assert(this.user, new HTTP_ERROR.NotFound('User', id));
   yield next;
 });
 
 router.patch('/:user', function *(next) {
-  this.assert(this.me.id === this.user.id, 403);
+  this.assert(this.me.id === this.user.id, new HTTP_ERROR.NoPermission());
 
   var properties = ['name', 'email'];
   var _this = this;
@@ -38,10 +38,10 @@ router.patch('/:user', function *(next) {
 });
 
 router.put('/:user/password', function *(next) {
-  this.assert(this.me.id === this.user.id, 403);
+  this.assert(this.me.id === this.user.id, new HTTP_ERROR.NoPermission());
 
   var isPasswordCorrect = yield this.me.comparePassword(this.request.body.oldPassword);
-  this.assert(isPasswordCorrect, 400, { error: 'Wrong Password' });
+  this.assert(isPasswordCorrect, new HTTP_ERROR.WrongPassword());
 
   this.body = yield this.me.updatePassword(this.request.body.newPassword);
 });

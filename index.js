@@ -7,24 +7,27 @@ app.use(require('koa-bodyparser')());
 
 // Error handling
 app.use(function *(next) {
+  this.createError = function(err) {
+    this.status = err.status || 500;
+    this.body = {
+      error: err.message,
+      type: err.name,
+      status: this.status
+    };
+  };
   try {
     yield next;
   } catch (err) {
     if (err.name === 'SequelizeValidationError') {
-      this.status = 400;
-      this.body = {
-        error: 'Parameter Error',
-        messages: err.errors.map(function(err) {
-          return err.message;
-        })
-      };
+      this.createError(new HTTP_ERROR.InvalidParameter(err.errors.map(function(err) {
+        return err.message;
+      })));
     } else {
-      this.status = err.status || 500;
-      err.error = err.error || http.STATUS_CODES[this.status];
-      this.body = {
-        error: err.error
-      };
-      if (this.status === 500) {
+      if (err.expose) {
+        this.createError(err);
+      } else {
+        this.status = err.status || 500;
+        this.body = { status: this.status };
         console.error(err.stack);
       }
     }
@@ -34,15 +37,25 @@ app.use(function *(next) {
 // Basic auth
 var auth = require('basic-auth');
 app.use(function *(next) {
+  var token = this.request.get('x-session-token');
+  if (token) {
+    this.me = yield Session.getUser(token);
+    this.assert(this.me, new HTTP_ERROR.InvalidToken());
+    this.me.setDataValue('authScope', 'session');
+  }
   var user = auth(this.req);
   if (user) {
-    this.assert(user, 401);
-    var userInstance = yield User.find({ where: { email: user.name } });
-    this.assert(userInstance, 401);
-    this.assert(yield userInstance.comparePassword(user.pass), 401);
-    this.me = userInstance;
-  } else {
-    this.assert(this.path === '/users', 401);
+    this.me = yield User.find({ where: { email: user.name } });
+    this.assert(this.me, new HTTP_ERROR.UnregisteredEmail());
+    this.assert(yield this.me.comparePassword(user.pass), new HTTP_ERROR.WrongPassword());
+    this.me.setDataValue('authScope', 'basic-auth');
+  }
+  if (!this.me) {
+    Object.defineProperty(this, 'me', {
+      get: function() {
+        this.throw(new HTTP_ERROR.Unauthorized());
+      }
+    });
   }
   yield next;
 });

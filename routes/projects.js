@@ -51,12 +51,13 @@ router.get('/', function *() {
 
 router.param('projectId', function *(id, next) {
   this.project = yield Project.find(id);
-  this.assert(this.project, 404);
+  this.assert(this.project, new HTTP_ERROR.NotFound('Project %s', id));
   yield next;
 });
 
 router.get('/:projectId', function *() {
-  this.assert(yield this.me.havePermission(this.project, 'read'), 403);
+  this.assert(yield this.me.havePermission(this.project, 'read'),
+              new HTTP_ERROR.NoPermission());
 
   var collections = yield this.project.getCollections();
   this.project.setDataValue('collections', collections);

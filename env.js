@@ -9,4 +9,16 @@ if (typeof ENV_FLAG === 'undefined') {
   };
 
   mergeObject(GLOBAL, require('./models'));
+  GLOBAL.HTTP_ERROR = require('./errors');
+
+  // Middlewares
+  GLOBAL.auth = function(isAdmin) {
+    return function *(next) {
+      this.assert(this.me, new HTTP_ERROR.Unauthorized());
+      if (isAdmin) {
+        this.assert(this.me.isAdmin, new HTTP_ERROR.NoPermission());
+      }
+      yield next;
+    };
+  };
 }

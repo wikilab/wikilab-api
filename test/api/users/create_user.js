@@ -16,7 +16,7 @@ describe('POST /users', function() {
     expect(user).to.not.have.property('password');
   });
 
-  it('should return 403 when signing up is disabled', function *() {
+  it('should return NoPermission when signing up is disabled', function *() {
     yield Setting.set('enableSignUp', false);
     try {
       yield api.users.post({
@@ -26,19 +26,18 @@ describe('POST /users', function() {
       });
       throw new Error('should reject');
     } catch (err) {
-      expect(err.statusCode).to.eql(403);
+      expect(err).to.be.an.error(HTTP_ERROR.NoPermission);
     }
   });
 
-  it('should reject when missing required properties', function *() {
+  it('should return InvalidParameter when missing required properties', function *() {
     try {
       yield api.users.post({
         email: 'tom@email.com'
       });
       throw new Error('should reject');
     } catch (err) {
-      expect(err.body).to.have.property('error', 'Parameter Error');
-      expect(err.statusCode).to.eql(400);
+      expect(err).to.be.an.error(HTTP_ERROR.InvalidParameter);
     }
   });
 

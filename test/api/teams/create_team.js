@@ -4,24 +4,32 @@ describe('POST /teams', function() {
     yield fixtures.users[0].addTeams(fixtures.teams[0]);
   });
 
-  it('should return 403 if is not admin', function *() {
+  it('should return Unauthorized when user is unauthorized', function *() {
+    try {
+      yield api.teams.post();
+      throw new Error('should reject');
+    } catch (err) {
+      expect(err).to.be.an.error(HTTP_ERROR.Unauthorized);
+    }
+  });
+
+  it('should return NoPermission if is not admin', function *() {
     var user = fixtures.users[1];
     try {
       yield api.$auth(user.email, user.password).teams.post();
       throw new Error('should reject');
     } catch (err) {
-      expect(err.statusCode).to.eql(403);
+      expect(err).to.be.an.error(HTTP_ERROR.NoPermission);
     }
   });
 
-  it('should reject without the "name" parameter', function *() {
+  it('should return InvalidParameter without the "name" parameter', function *() {
     var user = fixtures.users[0];
     try {
       yield api.$auth(user.email, user.password).teams.post({});
       throw new Error('should reject');
     } catch (err) {
-      expect(err.body).to.have.property('error', 'Parameter Error');
-      expect(err.statusCode).to.eql(400);
+      expect(err).to.be.an.error(HTTP_ERROR.InvalidParameter);
     }
   });
 

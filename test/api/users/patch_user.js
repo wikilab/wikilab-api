@@ -3,23 +3,32 @@ describe('PATCH /users/:user', function() {
     yield fixtures.load();
   });
 
-  it('should return 403 when patch other people', function *() {
+  it('should return Unauthorized when user is unauthorized', function *() {
+    try {
+      yield api.users('me').patch();
+      throw new Error('should reject');
+    } catch (err) {
+      expect(err).to.be.an.error(HTTP_ERROR.Unauthorized);
+    }
+  });
+
+  it('should return NoPermission when patch other people', function *() {
     var user = fixtures.users[0];
     try {
       yield api.$auth(user.email, user.password).users(fixtures.users[1].id).patch();
       throw new Error('should reject');
     } catch (err) {
-      expect(err.statusCode).to.eql(403);
+      expect(err).to.be.an.error(HTTP_ERROR.NoPermission);
     }
   });
 
-  it('should return 404 when not found', function *() {
+  it('should return NotFound when not found', function *() {
     var user = fixtures.users[0];
     try {
       yield api.$auth(user.email, user.password).users(123456789).patch();
       throw new Error('should reject');
     } catch (err) {
-      expect(err.statusCode).to.eql(404);
+      expect(err).to.be.an.error(HTTP_ERROR.NotFound);
     }
   });
 

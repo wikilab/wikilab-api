@@ -8,8 +8,6 @@ var sequelize = new Sequelize($config.database.name,
                               $config.database.pass,
                               $config.database);
 
-var self = module.exports = {};
-
 var models = require('node-require-directory')(__dirname);
 Object.keys(models).forEach(function(key) {
   var modelName = inflection.classify(key);
@@ -33,19 +31,22 @@ Object.keys(models).forEach(function(key) {
     DataTypes.LONGTEXT = isMySQL ? 'LONGTEXT' : 'TEXT';
     return sequelize.define.apply(sequelize, definition);
   });
-  self[modelName] = modelInstance;
+  exports[modelName] = modelInstance;
 });
 
-self.User.hasMany(self.Team, { constraints: false });
-self.Team.hasMany(self.User, { constraints: false });
+exports.User.hasMany(exports.Team, { constraints: false });
+exports.Team.hasMany(exports.User, { constraints: false });
 
-self.Project.hasMany(self.Team, { through: self.ProjectTeam, constraints: false });
-self.Team.hasMany(self.Project, { through: self.ProjectTeam, constraints: false });
+exports.Project.hasMany(exports.Team, { through: exports.ProjectTeam, constraints: false });
+exports.Team.hasMany(exports.Project, { through: exports.ProjectTeam, constraints: false });
 
-self.Collection.hasMany(self.Doc, { constraints: false });
-self.Doc.belongsTo(self.Collection, { constraints: false });
+exports.Collection.hasMany(exports.Doc, { constraints: false });
+exports.Doc.belongsTo(exports.Collection, { constraints: false });
 
-self.Project.hasMany(self.Collection, { constraints: false });
-self.Collection.belongsTo(self.Project, { constraints: false });
+exports.Project.hasMany(exports.Collection, { constraints: false });
+exports.Collection.belongsTo(exports.Project, { constraints: false });
 
-self.sequelize = self.DB = sequelize;
+exports.User.hasOne(exports.Session, { constraints: false });
+exports.Session.belongsTo(exports.User, { constraints: false });
+
+exports.sequelize = exports.DB = sequelize;

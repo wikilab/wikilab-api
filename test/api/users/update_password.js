@@ -3,27 +3,36 @@ describe('PUT /users/:user/password', function() {
     yield fixtures.load();
   });
 
-  it('should return 403 when change other\'s password', function *() {
+  it('should return Unauthorized when user is unauthorized', function *() {
+    try {
+      yield api.users('me').password.put();
+      throw new Error('should reject');
+    } catch (err) {
+      expect(err).to.be.an.error(HTTP_ERROR.Unauthorized);
+    }
+  });
+
+  it('should return NoPermission when change other\'s password', function *() {
     var user = fixtures.users[0];
     try {
       yield api.$auth(user.email, user.password).users(fixtures.users[1].id).password.put();
       throw new Error('should reject');
     } catch (err) {
-      expect(err.statusCode).to.eql(403);
+      expect(err).to.be.an.error(HTTP_ERROR.NoPermission);
     }
   });
 
-  it('should return 404 when not found', function *() {
+  it('should return NotFound when not found', function *() {
     var user = fixtures.users[0];
     try {
       yield api.$auth(user.email, user.password).users(123456789).password.put();
       throw new Error('should reject');
     } catch (err) {
-      expect(err.statusCode).to.eql(404);
+      expect(err).to.be.an.error(HTTP_ERROR.NotFound);
     }
   });
 
-  it('should return 400 with wrong old password', function *() {
+  it('should return WrongPassword with wrong old password', function *() {
     var user = fixtures.users[0];
     try {
       yield api.$auth(user.email, user.password).users(user.id).password.put({
@@ -31,8 +40,7 @@ describe('PUT /users/:user/password', function() {
       });
       throw new Error('should reject');
     } catch (err) {
-      expect(err.statusCode).to.eql(400);
-      expect(err.body.error).to.eql('Wrong Password');
+      expect(err).to.be.an.error(HTTP_ERROR.WrongPassword);
     }
   });
 

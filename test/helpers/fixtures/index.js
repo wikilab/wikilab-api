@@ -6,7 +6,7 @@ exports.load = function *(specificFixtures) {
   }
 
   try {
-    yield exports.unload(specificFixtures);
+    yield exports.unload();
 
     var keys = Object.keys(fixtures).filter(function(key) {
       if (specificFixtures && specificFixtures.indexOf(key) === -1) {
@@ -22,6 +22,6 @@ exports.load = function *(specificFixtures) {
   }
 };
 
-exports.unload = function *(specificFixtures) {
+exports.unload = function *() {
   yield sequelize.sync({ force: true });
 };

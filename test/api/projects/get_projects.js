@@ -20,6 +20,15 @@ describe('GET /projects', function() {
     ], { permission: 'admin' });
   });
 
+  it('should return Unauthorized when user is unauthorized', function *() {
+    try {
+      yield api.projects.get();
+      throw new Error('should reject');
+    } catch (err) {
+      expect(err).to.be.an.error(HTTP_ERROR.Unauthorized);
+    }
+  });
+
   it('should return all my projects with correct permission', function *() {
     var user = fixtures.users[0];
     var projects = yield api.$auth(user.email, user.password).projects.get();

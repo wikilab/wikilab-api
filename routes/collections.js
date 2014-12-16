@@ -2,7 +2,7 @@ var router = module.exports = new (require('koa-router'))();
 
 router.param('collectionId', function *(id, next) {
   this.collection = yield Collection.find(id);
-  this.assert(this.collection, 404);
+  this.assert(this.collection, new HTTP_ERROR.NotFound('Collection %s', id));
 
   this.project = yield this.collection.getProject();
   this.assert(this.project, 409);
@@ -16,7 +16,7 @@ router.param('collectionId', function *(id, next) {
 });
 
 router.get('/:collectionId', function *() {
-  this.assert(this.checkPermission('read'), 403);
+  this.assert(this.checkPermission('read'), new HTTP_ERROR.NoPermission());
   this.collection.setDataValue('project', this.project);
 
   var docs = yield this.collection.getDocs({ attributes: ['UUID', 'parentUUID'] });
