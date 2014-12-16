@@ -26,7 +26,7 @@ To auth a user using session token, add the custom header "X-SESSION-TOKEN" with
 
 Create a new session and get the token. You need to specify a ttl(measured in seconds).
 
-[Test](test/api/sessions/create-session.js)
+[Test](test/api/sessions/create_session.js)
 [Code](routes/sessions.js)
 
 ### Users
