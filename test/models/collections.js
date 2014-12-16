@@ -14,10 +14,10 @@ describe('Model.Collection', function() {
       yield docs[3].setParent(docs[1].UUID);
       yield docs[4].setParent(docs[1].UUID);
       yield docs[5].setParent(docs[1].UUID);
-      yield docs[2].setOrder(0);
-      yield docs[3].setOrder(1);
-      yield docs[4].setOrder(2);
-      yield docs[5].setOrder(3);
+      yield docs[5].setOrder(0);
+      yield docs[4].setOrder(1);
+      yield docs[3].setOrder(2);
+      yield docs[2].setOrder(3);
 
       var dirs = yield collection.getDirs();
       expect(dirs).to.be.instanceof(Array);
@@ -26,10 +26,10 @@ describe('Model.Collection', function() {
       expect(dirs[0].children).to.have.length(1);
       expect(dirs[0].children[0].UUID).to.eql(docs[1].UUID);
       expect(dirs[0].children[0].children).to.have.length(4);
-      expect(dirs[0].children[0].children[0].UUID).to.eql(docs[2].UUID);
-      expect(dirs[0].children[0].children[1].UUID).to.eql(docs[3].UUID);
-      expect(dirs[0].children[0].children[2].UUID).to.eql(docs[4].UUID);
-      expect(dirs[0].children[0].children[3].UUID).to.eql(docs[5].UUID);
+      expect(dirs[0].children[0].children[0].UUID).to.eql(docs[5].UUID);
+      expect(dirs[0].children[0].children[1].UUID).to.eql(docs[4].UUID);
+      expect(dirs[0].children[0].children[2].UUID).to.eql(docs[3].UUID);
+      expect(dirs[0].children[0].children[3].UUID).to.eql(docs[2].UUID);
     });
   });
 });

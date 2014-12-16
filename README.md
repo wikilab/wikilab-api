@@ -22,7 +22,7 @@ To auth a user using session token, set the custom header "X-SESSION-TOKEN" with
 
 ### Sessions
 
-**POST** /sessions
+**POST** `/sessions`
 
 Create a new session and get the token. You need to specify a ttl(measured in seconds).
 
@@ -31,64 +31,71 @@ Create a new session and get the token. You need to specify a ttl(measured in se
 
 ### Users
 
-**POST** /users
+**POST** `/users`
 
 Create a new user
 
-[Test](test/api/users/create-user.js)
+[Test](test/api/users/create_user.js)
 [Code](routes/users.js)
 
-**PATCH** /users/{userId|'me'}
+**PATCH** `/users/{userId|'me'}`
 
 Update the current user's info
 
-[Test](test/api/users/patch-user.js)
+[Test](test/api/users/patch_user.js)
 [Code](routes/users.js)
 
-**PUT** /users/{userId|'me'}/password
+**PUT** `/users/{userId|'me'}/password`
 
 Update the current user's password
 
-[Test](test/api/users/update-password.js)
+[Test](test/api/users/update_password.js)
 [Code](routes/users.js)
 
 ### Teams
 
-**POST** /teams
+**POST** `/teams`
 
 Create a new team
 
-[Test](test/api/teams/create-team.js)
+[Test](test/api/teams/create_team.js)
 [Code](routes/teams.js)
 
 ### Projects
 
-**GET** /projects
+**GET** `/projects`
 
 Get all projects which the current user has access to
 
-[Test](test/api/projects/get-projects.js)
+[Test](test/api/projects/get_projects.js)
 [Code](routes/projects.js)
 
-**GET** /projects/:projectId
+**GET** `/projects/:projectId`
 
 Get the specified project info
 
-[Test](test/api/projects/get-project.js)
+[Test](test/api/projects/get_project.js)
 [Code](routes/projects.js)
 
 ### Collections
 
-**Get** /collections/:collectionId
+**Get** `/collections/:collectionId`
 
 Get the specified collection info
 
-[Test](test/api/collections/get-collection.js)
+[Test](test/api/collections/get_collection.js)
 [Code](routes/collections.js)
 
-**Get** /collections/:collectionId/dirs
+**Get** `/collections/:collectionId/dirs`
 
 Get the dirs of a collection
 
-[Test](test/api/collections/get-collection_dirs.js)
+[Test](test/api/collections/get_collection_dirs.js)
+[Code](routes/collections.js)
+
+**POST** `/collections/:collectionId/_move`
+
+Move the doc in the dirs.
+
+[Test](test/api/collections/move_collection_dirs.js)
 [Code](routes/collections.js)

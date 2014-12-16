@@ -7,7 +7,7 @@ module.exports = function(DataTypes) {
   }, {
     instanceMethods: {
       getDirs: function *() {
-        var docs = yield this.getDocs({ attributes: ['UUID', 'parentUUID', 'title'] });
+        var docs = yield this.getDocs({ attributes: ['UUID', 'parentUUID', 'title', 'order'] });
         docs = docs.map(function(doc) {
           doc = doc.dataValues;
           doc.children = [];
@@ -31,22 +31,29 @@ module.exports = function(DataTypes) {
             dirs.push(idMapper[key]);
           }
         });
-        removeUnnessaryProperties(dirs);
-        return dirs;
+        return removeUnnessaryPropertiesAndSort(dirs);
       }
     }
   }];
 };
 
-function removeUnnessaryProperties(obj) {
-  if (Array.isArray(obj)) {
-    return obj.forEach(removeUnnessaryProperties);
-  }
-  delete obj.isChild;
-  delete obj.parentUUID;
-  if (obj.children.length) {
-    removeUnnessaryProperties(obj.children);
-  } else {
-    delete obj.children;
-  }
+function removeUnnessaryPropertiesAndSort(array) {
+  array = array.sort(function(a, b) {
+    if (typeof a.order === 'number' && typeof b.order === 'number') {
+      return a.order - b.order;
+    } else {
+      return a.createdAt - b.createdAt;
+    }
+  });
+  array.forEach(function(obj) {
+    delete obj.isChild;
+    delete obj.parentUUID;
+    delete obj.order;
+    if (obj.children.length) {
+      obj.children = removeUnnessaryPropertiesAndSort(obj.children);
+    } else {
+      delete obj.children;
+    }
+  });
+  return array;
 }
