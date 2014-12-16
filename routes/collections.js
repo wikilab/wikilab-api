@@ -19,28 +19,10 @@ router.get('/:collectionId', function *() {
   this.assert(this.checkPermission('read'), new HTTP_ERROR.NoPermission());
   this.collection.setDataValue('project', this.project);
 
-  var docs = yield this.collection.getDocs({ attributes: ['UUID', 'parentUUID'] });
-
-  var treeDoc = {};
-  docs = docs.map(function(doc) {
-    doc = doc.dataValues;
-    treeDoc[doc.UUID] = doc;
-    doc.children = [];
-    return doc;
-  });
-  docs.forEach(function(doc) {
-    if (doc.parentUUID) {
-      treeDoc[doc.parentUUID].children.push(doc);
-      doc.isChild = true;
-    }
-  });
-  docs = [];
-  Object.keys(treeDoc).forEach(function(key) {
-    if (!treeDoc[key].isChild) {
-      docs.push(treeDoc[key]);
-    }
-  });
-  this.collection.setDataValue('dirs', docs);
-
   this.body = this.collection;
+});
+
+router.get('/:collectionId/dirs', function *() {
+  this.assert(this.checkPermission('read'), new HTTP_ERROR.NoPermission());
+  this.body = yield this.collection.getDirs();
 });

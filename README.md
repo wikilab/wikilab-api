@@ -76,3 +76,19 @@ Get the specified project info
 
 [Test](test/api/projects/get-project.js)
 [Code](routes/projects.js)
+
+### Collections
+
+#### Get /collections/:collectionId
+
+Get the specified collection info
+
+[Test](test/api/collections/get-collection.js)
+[Code](routes/collections.js)
+
+#### Get /collections/:collectionId/dirs
+
+Get the dirs of a collection
+
+[Test](test/api/collections/get-collection_dirs.js)
+[Code](routes/collections.js)

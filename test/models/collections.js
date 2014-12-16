@@ -3,7 +3,7 @@ describe('Model.Collection', function() {
     yield fixtures.load(['docs', 'collections']);
   });
 
-  describe.only('#getDirs()', function() {
+  describe('#getDirs()', function() {
     it('should return the dirs of the docs', function *() {
       var collection = fixtures.collections[0];
       var docs = fixtures.docs;
