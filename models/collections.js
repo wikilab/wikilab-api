@@ -8,27 +8,45 @@ module.exports = function(DataTypes) {
     instanceMethods: {
       getDirs: function *() {
         var docs = yield this.getDocs({ attributes: ['UUID', 'parentUUID', 'title'] });
-        var treeDoc = {};
         docs = docs.map(function(doc) {
           doc = doc.dataValues;
-          treeDoc[doc.UUID] = doc;
           doc.children = [];
           return doc;
         });
+
+        var idMapper = {};
+        docs.forEach(function(doc) {
+          idMapper[doc.UUID] = doc;
+        });
+
         docs.forEach(function(doc) {
           if (doc.parentUUID) {
-            treeDoc[doc.parentUUID].children.push(doc);
+            idMapper[doc.parentUUID].children.push(doc);
             doc.isChild = true;
           }
         });
-        docs = [];
-        Object.keys(treeDoc).forEach(function(key) {
-          if (!treeDoc[key].isChild) {
-            docs.push(treeDoc[key]);
+        var dirs = [];
+        Object.keys(idMapper).forEach(function(key) {
+          if (!idMapper[key].isChild) {
+            dirs.push(idMapper[key]);
           }
         });
-        this.collection.setDataValue('dirs', docs);
+        removeUnnessaryProperties(dirs);
+        return dirs;
       }
     }
   }];
 };
+
+function removeUnnessaryProperties(obj) {
+  if (Array.isArray(obj)) {
+    return obj.forEach(removeUnnessaryProperties);
+  }
+  delete obj.isChild;
+  delete obj.parentUUID;
+  if (obj.children.length) {
+    removeUnnessaryProperties(obj.children);
+  } else {
+    delete obj.children;
+  }
+}
