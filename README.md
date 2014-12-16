@@ -22,7 +22,7 @@ To auth a user using session token, set the custom header "X-SESSION-TOKEN" with
 
 ### Sessions
 
-#### POST /sessions
+**POST** /sessions
 
 Create a new session and get the token. You need to specify a ttl(measured in seconds).
 
@@ -31,21 +31,21 @@ Create a new session and get the token. You need to specify a ttl(measured in se
 
 ### Users
 
-#### POST /users
+**POST** /users
 
 Create a new user
 
 [Test](test/api/users/create-user.js)
 [Code](routes/users.js)
 
-#### PATCH /users/{userId|'me'}
+**PATCH** /users/{userId|'me'}
 
 Update the current user's info
 
 [Test](test/api/users/patch-user.js)
 [Code](routes/users.js)
 
-#### PUT /users/{userId|'me'}/password
+**PUT** /users/{userId|'me'}/password
 
 Update the current user's password
 
@@ -54,7 +54,7 @@ Update the current user's password
 
 ### Teams
 
-#### POST /teams
+**POST** /teams
 
 Create a new team
 
@@ -63,14 +63,14 @@ Create a new team
 
 ### Projects
 
-#### GET /projects
+**GET** /projects
 
 Get all projects which the current user has access to
 
 [Test](test/api/projects/get-projects.js)
 [Code](routes/projects.js)
 
-#### GET /projects/:projectId
+**GET** /projects/:projectId
 
 Get the specified project info
 
@@ -79,14 +79,14 @@ Get the specified project info
 
 ### Collections
 
-#### Get /collections/:collectionId
+**Get** /collections/:collectionId
 
 Get the specified collection info
 
 [Test](test/api/collections/get-collection.js)
 [Code](routes/collections.js)
 
-#### Get /collections/:collectionId/dirs
+**Get** /collections/:collectionId/dirs
 
 Get the dirs of a collection
 
