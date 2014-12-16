@@ -24,6 +24,7 @@ describe('POST /sessions', function() {
   it('should create a session successfully', function *() {
     var user = fixtures.users[0];
     var session = yield api.$auth(user.email, user.password).sessions.post({ ttl: 600 });
+    expect(session).to.have.property('token');
     expect(session.ttl).to.eql(600);
     expect(new Date(session.expiredAt) - new Date(session.createdAt)).to.eql(600 * 1000);
   });

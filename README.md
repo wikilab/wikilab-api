@@ -18,7 +18,7 @@ HTTP API
 
 There are two methods available for authentication: HTTP Basic and session token. HTTP Basic authentication should only be used to request a new session token or when session token don't have enough permission to access(or update) the resource(i.e. changing user's password).
 
-To auth a user using session token, add the custom header "X-SESSION-TOKEN" with the value of the token you have.
+To auth a user using session token, set the custom header "X-SESSION-TOKEN" with the value of the token you have.
 
 ### Sessions
 
