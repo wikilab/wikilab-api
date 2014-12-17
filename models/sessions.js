@@ -27,7 +27,11 @@ module.exports = function(DataTypes) {
     },
     classMethods: {
       getUser: function *(token) {
-        var session = yield this.find({ where: { token: token } });
+        var session;
+        try {
+          session = yield this.find({ where: { token: token } });
+        } catch (err) {
+        }
         if (!session) {
           return null;
         }
