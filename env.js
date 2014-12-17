@@ -10,15 +10,4 @@ if (typeof ENV_FLAG === 'undefined') {
 
   mergeObject(GLOBAL, require('./models'));
   GLOBAL.HTTP_ERROR = require('./errors');
-
-  // Middlewares
-  GLOBAL.auth = function(isOwner) {
-    return function *(next) {
-      this.assert(this.me, new HTTP_ERROR.Unauthorized());
-      if (isOwner) {
-        this.assert(this.me.isOwner, new HTTP_ERROR.NoPermission());
-      }
-      yield next;
-    };
-  };
 }
