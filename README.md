@@ -63,6 +63,13 @@ Create a new team
 
 ### Projects
 
+**POST** `/projects`
+
+Create a new project
+
+[Test](test/api/projects/create_project.js)
+[Code](routes/projects.js)
+
 **GET** `/projects`
 
 Get all projects which the current user has access to

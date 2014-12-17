@@ -1,5 +1,14 @@
 var router = module.exports = new (require('koa-router'))();
 
+router.post('/', function *() {
+  this.assert(this.me.isAdmin, new HTTP_ERROR.NoPermission());
+
+  var body = this.request.body;
+  this.assert(body && body.name, new HTTP_ERROR.InvalidParameter('name is required'));
+
+  this.body = yield Project.create({ name: body.name });
+});
+
 router.get('/', function *() {
   var teams = yield this.me.getTeams();
 
