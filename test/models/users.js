@@ -38,7 +38,7 @@ describe('Model.User', function() {
 
   describe('#havePermission()', function() {
     beforeEach(function *() {
-      yield fixtures.users[0].addTeams([
+      yield fixtures.users[1].addTeams([
         fixtures.teams[1],
         fixtures.teams[2],
         fixtures.teams[3]
@@ -56,7 +56,8 @@ describe('Model.User', function() {
     });
 
     it('should return the correct result', function *() {
-      var user = fixtures.users[0];
+      var user = fixtures.users[1];
+      var owner = fixtures.users[0];
       var projects = fixtures.projects;
       expect(yield user.havePermission(projects[0], 'read')).to.eql(true);
       expect(yield user.havePermission(projects[0], 'write')).to.eql(false);
@@ -67,6 +68,11 @@ describe('Model.User', function() {
       expect(yield user.havePermission(projects[2], 'admin')).to.eql(false);
       expect(yield user.havePermission(projects[3], 'read')).to.eql(false);
       expect(yield user.havePermission(projects[3], 'admin')).to.eql(false);
+
+      expect(yield owner.havePermission(projects[0], 'admin')).to.eql(true);
+      expect(yield owner.havePermission(projects[1], 'admin')).to.eql(true);
+      expect(yield owner.havePermission(projects[2], 'admin')).to.eql(true);
+      expect(yield owner.havePermission(projects[3], 'admin')).to.eql(true);
     });
   });
 });

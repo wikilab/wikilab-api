@@ -16,10 +16,20 @@ describe('Model.Doc', function() {
     });
   });
 
-  it('should update successfully when parentUUID is not touched', function() {
+  it('should reject update title and content', function *() {
     var doc = fixtures.docs[0];
-    doc.title = 'updated doc';
-    return doc.save();
+    try {
+      yield doc.updateAttributes({ title: 'updated title' });
+      throw new Error('should reject');
+    } catch (err) {
+      expect(err.message).to.eql('Can\'t update intrinsic properties');
+    }
+    try {
+      yield doc.updateAttributes({ content: 'updated content' });
+      throw new Error('should reject');
+    } catch (err) {
+      expect(err.message).to.eql('Can\'t update intrinsic properties');
+    }
   });
 
   describe('.createWithTransaction()', function() {
@@ -67,11 +77,23 @@ describe('Model.Doc', function() {
       var oldDoc = fixtures.docs[0];
       return Doc.createWithTransaction({
         UUID: oldDoc.UUID,
+        title: oldDoc.title.repeat(2),
+        content: oldDoc.content.repeat(2),
+        CollectionId: fixtures.collections[0].id
+      }).then(function(doc) {
+        expect(doc.distance).to.eql(oldDoc.title.length + oldDoc.content.length);
+      });
+    });
+
+    it('should incr version', function() {
+      var oldDoc = fixtures.docs[0];
+      return Doc.createWithTransaction({
+        UUID: oldDoc.UUID,
         title: 'new title',
         content: '',
         CollectionId: fixtures.collections[0].id
       }).then(function(doc) {
-        expect(doc.distance).to.eql(oldDoc.content.length);
+        expect(doc.version).to.eql(oldDoc.version + 1);
       });
     });
 

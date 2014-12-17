@@ -1,8 +1,10 @@
 describe('POST /collections/:collectionId/docs', function() {
   beforeEach(function *() {
     yield fixtures.load();
-    yield fixtures.users[0].addTeam(fixtures.teams[0]);
-    yield fixtures.users[1].addTeam(fixtures.teams[1]);
+    this.writer = fixtures.users[1];
+    this.reader = fixtures.users[2];
+    yield this.writer.addTeam(fixtures.teams[0]);
+    yield this.reader.addTeam(fixtures.teams[1]);
     yield fixtures.teams[0].addProject(fixtures.projects[0], { permission: 'write' });
     yield fixtures.teams[1].addProject(fixtures.projects[0], { permission: 'read' });
     yield fixtures.projects[0].addCollection(fixtures.collections[0]);
@@ -18,9 +20,8 @@ describe('POST /collections/:collectionId/docs', function() {
   });
 
   it('should return NotFound when collection is not found', function *() {
-    var user = fixtures.users[0];
     try {
-      yield api.$auth(user.email, user.password).collections(1993).docs.post();
+      yield api.$auth(this.writer.email, this.writer.password).collections(1993).docs.post();
       throw new Error('should reject');
     } catch (err) {
       expect(err).to.be.an.error(HTTP_ERROR.NotFound);
@@ -28,10 +29,9 @@ describe('POST /collections/:collectionId/docs', function() {
   });
 
   it('should return NoPermission when the user don\'t have write permission', function *() {
-    var user = fixtures.users[1];
     var collection = fixtures.collections[0];
     try {
-      yield api.$auth(user.email, user.password).collections(collection.id).docs.post();
+      yield api.$auth(this.reader.email, this.reader.password).collections(collection.id).docs.post();
       throw new Error('should reject');
     } catch (err) {
       expect(err).to.be.an.error(HTTP_ERROR.NoPermission);
@@ -39,9 +39,8 @@ describe('POST /collections/:collectionId/docs', function() {
   });
 
   it('should return InvalidParameter when parameters are invalid', function *() {
-    var user = fixtures.users[0];
     var collection = fixtures.collections[0];
-    var base = api.$auth(user.email, user.password).collections(collection.id).docs;
+    var base = api.$auth(this.writer.email, this.writer.password).collections(collection.id).docs;
     try {
       yield base.post();
       throw new Error('should reject');
@@ -57,9 +56,8 @@ describe('POST /collections/:collectionId/docs', function() {
   });
 
   it('should create a new doc', function *() {
-    var user = fixtures.users[0];
     var collection = fixtures.collections[0];
-    var doc = yield api.$auth(user.email, user.password).collections(collection.id).docs.post({
+    var doc = yield api.$auth(this.writer.email, this.writer.password).collections(collection.id).docs.post({
       title: 'new title',
       content: 'new content'
     });
@@ -73,11 +71,10 @@ describe('POST /collections/:collectionId/docs', function() {
   });
 
   it('should set parentUUID if specified', function *() {
-    var user = fixtures.users[0];
     var collection = fixtures.collections[0];
     var parentDoc = fixtures.docs[0];
     yield collection.addDocs(parentDoc);
-    var doc = yield api.$auth(user.email, user.password).collections(collection.id).docs.post({
+    var doc = yield api.$auth(this.writer.email, this.writer.password).collections(collection.id).docs.post({
       title: 'new title',
       content: 'new content',
       parentUUID: parentDoc.UUID
@@ -86,10 +83,9 @@ describe('POST /collections/:collectionId/docs', function() {
   });
 
   it('should return InvalidParameter and rollback when parentUUID is invalid', function *() {
-    var user = fixtures.users[0];
     var collection = fixtures.collections[0];
     try {
-      yield api.$auth(user.email, user.password).collections(collection.id).docs.post({
+      yield api.$auth(this.writer.email, this.writer.password).collections(collection.id).docs.post({
         title: 'new title',
         content: 'new content',
         parentUUID: 'invalid uuid'

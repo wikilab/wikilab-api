@@ -56,16 +56,16 @@ describe('PUT /projects/:projectId/teams/:teamId', function() {
 
   it('should update permission successfully and return the previous permission', function *() {
     var result = yield api.$auth(this.admin.email, this.admin.password).projects(this.project.id).teams(this.team.id).put({ permission: 'read' });
-    expect(result.permission.previous).to.eql('write');
-    expect(result.permission.current).to.eql('read');
+    expect(result.permissions.previous).to.eql('write');
+    expect(result.permissions.current).to.eql('read');
   });
 
   it('should return null if team has no permission to the project', function *() {
     var result;
     result = yield api.$auth(this.admin.email, this.admin.password).projects(this.project.id).teams(this.team.id).put({ permission: null });
-    expect(result.permission.current).to.eql(null);
+    expect(result.permissions.current).to.eql(null);
 
     result = yield api.$auth(this.admin.email, this.admin.password).projects(this.project.id).teams(this.team.id).put({ permission: 'read' });
-    expect(result.permission.previous).to.eql(null);
+    expect(result.permissions.previous).to.eql(null);
   });
 });

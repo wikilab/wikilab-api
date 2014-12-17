@@ -31,7 +31,7 @@ router.post('/:collectionId/dirs/_move', function *() {
   this.assert(this.checkPermission('write'), new HTTP_ERROR.NoPermission());
 
   var body = this.request.body;
-  this.assert(body && body.UUID, new HTTP_ERROR.InvalidParameter('UUID is required'));
+  this.assert(body.UUID, new HTTP_ERROR.InvalidParameter('UUID is required'));
   if (typeof body.order !== 'undefined') {
     this.assert(typeof body.order === 'number', new HTTP_ERROR.InvalidParameter('order should be a number'));
   }
@@ -57,7 +57,7 @@ router.post('/:collectionId/dirs/_move', function *() {
 router.post('/:collectionId/docs', function *() {
   this.assert(this.checkPermission('write'), new HTTP_ERROR.NoPermission());
   var body = this.request.body;
-  this.assert(body && body.title, new HTTP_ERROR.InvalidParameter('title is required'));
+  this.assert(body.title, new HTTP_ERROR.InvalidParameter('title is required'));
   this.assert(body.content, new HTTP_ERROR.InvalidParameter('content is required'));
 
   var doc;

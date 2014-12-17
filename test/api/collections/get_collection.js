@@ -1,7 +1,9 @@
 describe('GET /collections/:collectionId', function() {
   beforeEach(function *() {
     yield fixtures.load();
-    yield fixtures.users[0].addTeam(fixtures.teams[0]);
+    this.reader = fixtures.users[1];
+    this.guest = fixtures.users[2];
+    yield this.reader.addTeam(fixtures.teams[0]);
     yield fixtures.teams[0].addProject(fixtures.projects[0], { permission: 'read' });
     yield fixtures.projects[0].addCollection(fixtures.collections[0]);
     yield fixtures.collections[0].addDocs(fixtures.docs);
@@ -20,9 +22,8 @@ describe('GET /collections/:collectionId', function() {
   });
 
   it('should return NotFound when collection is not found', function *() {
-    var user = fixtures.users[0];
     try {
-      yield api.$auth(user.email, user.password).collections(1993).get();
+      yield api.$auth(this.reader.email, this.reader.password).collections(1993).get();
       throw new Error('should reject');
     } catch (err) {
       expect(err).to.be.an.error(HTTP_ERROR.NotFound);
@@ -30,10 +31,9 @@ describe('GET /collections/:collectionId', function() {
   });
 
   it('should return NoPermission when the user don\'t have read permission', function *() {
-    var user = fixtures.users[1];
     var collection = fixtures.collections[0];
     try {
-      yield api.$auth(user.email, user.password).collections(collection.id).get();
+      yield api.$auth(this.guest.email, this.guest.password).collections(collection.id).get();
       throw new Error('should reject');
     } catch (err) {
       expect(err).to.be.an.error(HTTP_ERROR.NoPermission);
@@ -41,10 +41,9 @@ describe('GET /collections/:collectionId', function() {
   });
 
   it('should return the collection with it\'s project', function *() {
-    var user = fixtures.users[0];
     var project = fixtures.projects[0];
     var collection = fixtures.collections[0];
-    var returnedCollection = yield api.$auth(user.email, user.password).collections(collection.id).get();
+    var returnedCollection = yield api.$auth(this.reader.email, this.reader.password).collections(collection.id).get();
     expect(returnedCollection).to.have.property('id', collection.id);
     expect(returnedCollection).to.have.property('name', collection.name);
     expect(returnedCollection.project).to.have.property('id', project.id);

@@ -34,6 +34,13 @@ app.use(function *(next) {
   }
 });
 
+app.use(function *(next) {
+  if (typeof this.request.body === 'undefined' || this.request.body === null) {
+    this.request.body = {};
+  }
+  yield next;
+});
+
 // Basic auth
 var auth = require('basic-auth');
 app.use(function *(next) {

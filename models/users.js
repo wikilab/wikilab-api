@@ -60,6 +60,9 @@ module.exports = function(DataTypes) {
         return yield this.save(['password']);
       },
       getPermission: function *(project) {
+        if (this.isOwner) {
+          return 'admin';
+        }
         var teams = yield this.getTeams({ attributes: ['id'] });
         var teamIds = teams.map(function(team) {
           return team.id;

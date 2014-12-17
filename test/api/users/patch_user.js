@@ -32,21 +32,26 @@ describe('PATCH /users/:user', function() {
     }
   });
 
+  it('should allow empty body', function *() {
+    var user = fixtures.users[0];
+    var result = yield api.$auth(user.email, user.password).users(user.id).patch();
+    expect(result.changedProperties).to.eql([]);
+  });
+
   it('should update the specific properties', function *() {
     var user = fixtures.users[0];
-    var returnedUser = yield api.$auth(user.email, user.password).users(user.id).patch({
+    var result = yield api.$auth(user.email, user.password).users(user.id).patch({
       name: 'updated name'
     });
-    expect(returnedUser).to.have.property('name', 'updated name');
-    expect(returnedUser).to.have.property('email', user.email);
+    expect(result.changedProperties).to.eql(['name']);
     expect(yield user.reload()).to.have.property('name', 'updated name');
   });
 
   it('should support alias "me"', function *() {
     var user = fixtures.users[0];
-    var returnedUser = yield api.$auth(user.email, user.password).users('me').patch({
+    yield api.$auth(user.email, user.password).users('me').patch({
       name: 'updated name'
     });
-    expect(returnedUser).to.have.property('name', 'updated name');
+    expect(yield user.reload()).to.have.property('name', 'updated name');
   });
 });

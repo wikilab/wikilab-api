@@ -4,7 +4,7 @@ router.post('/', function *() {
   this.assert(this.me.isOwner, new HTTP_ERROR.NoPermission());
 
   var body = this.request.body;
-  this.assert(body && body.name, new HTTP_ERROR.InvalidParameter('name is required'));
+  this.assert(body.name, new HTTP_ERROR.InvalidParameter('name is required'));
 
   this.body = yield Project.create({ name: body.name });
 });
@@ -75,9 +75,8 @@ router.get('/:projectId', function *() {
 });
 
 router.put('/:projectId/teams/:teamId', function *() {
-  var havePermission = this.me.isOwner || (yield this.me.havePermission(this.project, 'admin'));
-  this.assert(havePermission, new HTTP_ERROR.NoPermission());
-  this.assert(this.request.body && typeof this.request.body.permission !== 'undefined',
+  this.assert(yield this.me.havePermission(this.project, 'admin'), new HTTP_ERROR.NoPermission());
+  this.assert(typeof this.request.body.permission !== 'undefined',
               new HTTP_ERROR.InvalidParameter('permission is required'));
 
   var team = yield Team.find({
@@ -103,6 +102,6 @@ router.put('/:projectId/teams/:teamId', function *() {
     }
   }
   this.body = {
-    permission: { previous: previous, current: current }
+    permissions: { previous: previous, current: current }
   };
 });

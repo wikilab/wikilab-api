@@ -1,4 +1,5 @@
 var natural = require('natural');
+var Instance = require('../node_modules/sequelize/lib/instance.js');
 
 module.exports = function(DataTypes) {
   return [{
@@ -20,6 +21,10 @@ module.exports = function(DataTypes) {
     content: {
       type: DataTypes.LONGTEXT,
       allowNull: false
+    },
+    version: {
+      type: DataTypes.INTEGER,
+      defaultValue: 1
     },
     current: {
       type: DataTypes.BOOLEAN,
@@ -46,6 +51,10 @@ module.exports = function(DataTypes) {
         if (options.fields.indexOf('parentUUID') !== -1 && !options.transaction) {
           throw new Error('Updating the parentUUID should within a transaction');
         }
+        var intrinsicProperties = ['title', 'content'];
+        if (_.intersection(options.fields, intrinsicProperties).length) {
+          throw new Error('Can\'t update intrinsic properties');
+        }
       }
     },
     classMethods: {
@@ -60,13 +69,15 @@ module.exports = function(DataTypes) {
           }
           var prevDoc = yield Doc.find({
             where: { UUID: doc.UUID, current: true },
-            attributes: ['id', 'content', 'current']
+            attributes: ['id', 'content', 'current', 'version', 'title']
           }, {
             transaction: t,
             lock: t.LOCK.UPDATE
           });
           if (prevDoc) {
-            doc.distance = natural.LevenshteinDistance(doc.content, prevDoc.content);
+            doc.distance = natural.LevenshteinDistance(doc.content, prevDoc.content) +
+                           natural.LevenshteinDistance(doc.title, prevDoc.title);
+            doc.version = prevDoc.version + 1;
             yield prevDoc.updateAttributes({ current: false }, { fields: ['current'], silent: true, transaction: t });
           }
           var createdDoc = yield this.create(doc, { transaction: t });
@@ -79,6 +90,11 @@ module.exports = function(DataTypes) {
       }
     },
     instanceMethods: {
+      toJSON: function() {
+        var ret = Instance.prototype.toJSON.call(this);
+        delete ret.id;
+        return ret;
+      },
       setParent: function *(parentUUID) {
         var t = yield sequelize.transaction();
         try {

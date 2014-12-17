@@ -27,14 +27,15 @@ router.patch('/:user', function *(next) {
   this.assert(this.me.id === this.user.id, new HTTP_ERROR.NoPermission());
 
   var properties = ['name', 'email'];
-  var _this = this;
-  properties.forEach(function(property) {
-    if (typeof _this.request.body[property] !== 'undefined') {
-      _this.user[property] = _this.request.body[property];
-    }
-  });
+  _.intersection(properties, Object.keys(this.request.body)).forEach(function(key) {
+    this.user[key] = this.request.body[key];
+  }, this);
 
-  this.body = yield this.user.save();
+  var changed = this.user.changed();
+  if (changed) {
+    yield this.user.save();
+  }
+  this.body = { changedProperties: changed || [] };
 });
 
 router.put('/:user/password', function *(next) {

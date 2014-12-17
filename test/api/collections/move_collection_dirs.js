@@ -1,8 +1,10 @@
 describe('POST /collections/:collectionId/dirs/_move', function() {
   beforeEach(function *() {
     yield fixtures.load();
-    yield fixtures.users[0].addTeam(fixtures.teams[0]);
-    yield fixtures.users[1].addTeam(fixtures.teams[1]);
+    this.writer = fixtures.users[1];
+    this.reader = fixtures.users[2];
+    yield this.writer.addTeam(fixtures.teams[0]);
+    yield this.reader.addTeam(fixtures.teams[1]);
     yield fixtures.teams[0].addProject(fixtures.projects[0], { permission: 'write' });
     yield fixtures.teams[1].addProject(fixtures.projects[0], { permission: 'read' });
     yield fixtures.projects[0].addCollection(fixtures.collections[0]);
@@ -18,9 +20,8 @@ describe('POST /collections/:collectionId/dirs/_move', function() {
   });
 
   it('should return NotFound when collection is not found', function *() {
-    var user = fixtures.users[0];
     try {
-      yield api.$auth(user.email, user.password).collections(1993).dirs('_move').post();
+      yield api.$auth(this.writer.email, this.writer.password).collections(1993).dirs('_move').post();
       throw new Error('should reject');
     } catch (err) {
       expect(err).to.be.an.error(HTTP_ERROR.NotFound);
@@ -28,10 +29,9 @@ describe('POST /collections/:collectionId/dirs/_move', function() {
   });
 
   it('should return NoPermission when the user don\'t have write permission', function *() {
-    var user = fixtures.users[1];
     var collection = fixtures.collections[0];
     try {
-      yield api.$auth(user.email, user.password).collections(collection.id).dirs('_move').post();
+      yield api.$auth(this.reader.email, this.reader.password).collections(collection.id).dirs('_move').post();
       throw new Error('should reject');
     } catch (err) {
       expect(err).to.be.an.error(HTTP_ERROR.NoPermission);
@@ -39,9 +39,8 @@ describe('POST /collections/:collectionId/dirs/_move', function() {
   });
 
   it('should return InvalidParameter when parameters are invalid', function *() {
-    var user = fixtures.users[0];
     var collection = fixtures.collections[0];
-    var base = api.$auth(user.email, user.password).collections(collection.id).dirs('_move');
+    var base = api.$auth(this.writer.email, this.writer.password).collections(collection.id).dirs('_move');
     try {
       yield base.post();
       throw new Error('should reject');
@@ -57,7 +56,6 @@ describe('POST /collections/:collectionId/dirs/_move', function() {
   });
 
   it('should set parent and order', function *() {
-    var user = fixtures.users[0];
     var collection = fixtures.collections[0];
     var doc = fixtures.docs[3];
     var parentDoc = fixtures.docs[0];
@@ -67,7 +65,7 @@ describe('POST /collections/:collectionId/dirs/_move', function() {
     yield doc.setParent(fixtures.docs[2].UUID);
     var dirs;
     dirs = yield collection.getDirs();
-    yield api.$auth(user.email, user.password).collections(collection.id).dirs('_move').post({
+    yield api.$auth(this.writer.email, this.writer.password).collections(collection.id).dirs('_move').post({
       UUID: doc.UUID,
       parentUUID: parentDoc.UUID,
       order: 1
