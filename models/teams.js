@@ -4,5 +4,8 @@ module.exports = function(DataTypes) {
       type: DataTypes.STRING,
       allowNull: false
     }
+  }, {
+    timestamps: true,
+    updatedAt: false
   }];
 };

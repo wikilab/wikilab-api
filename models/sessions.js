@@ -18,6 +18,8 @@ module.exports = function(DataTypes) {
     },
     expiredAt: DataTypes.DATE
   }, {
+    timestamps: true,
+    updatedAt: false,
     hooks: {
       beforeCreate: function (session) {
         session.expiredAt = new Date(session.createdAt.valueOf() + session.ttl * 1000);

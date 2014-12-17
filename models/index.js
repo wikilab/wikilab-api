@@ -34,8 +34,8 @@ Object.keys(models).forEach(function(key) {
   exports[modelName] = modelInstance;
 });
 
-exports.User.hasMany(exports.Team, { constraints: false });
-exports.Team.hasMany(exports.User, { constraints: false });
+exports.User.hasMany(exports.Team, { constraints: false, timestamps: false });
+exports.Team.hasMany(exports.User, { constraints: false, timestamps: false });
 
 exports.Project.hasMany(exports.Team, { through: exports.ProjectTeam, constraints: false });
 exports.Team.hasMany(exports.Project, { through: exports.ProjectTeam, constraints: false });

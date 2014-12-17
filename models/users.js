@@ -26,6 +26,8 @@ module.exports = function(DataTypes) {
       defaultValue: false
     }
   }, {
+    timestamps: true,
+    updatedAt: false,
     hooks: {
       beforeCreate: function *(user) {
         if ($config.bcryptRound) {

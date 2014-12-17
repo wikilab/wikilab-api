@@ -39,6 +39,8 @@ module.exports = function(DataTypes) {
       type: DataTypes.INTEGER
     }
   }, {
+    timestamps: true,
+    updatedAt: false,
     hooks: {
       beforeUpdate: function *(doc, options) {
         if (options.fields.indexOf('parentUUID') !== -1 && !options.transaction) {

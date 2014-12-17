@@ -10,6 +10,7 @@ module.exports = function(DataTypes) {
       allowNull: false
     }
   }, {
+    timestamps: false,
     classMethods: {
       set: function *(key, value) {
         value = JSON.stringify(value);
