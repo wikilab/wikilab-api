@@ -5,6 +5,8 @@ exports.load = function *(specificFixtures) {
     specificFixtures = [specificFixtures];
   }
 
+  var prevSetting = sequelize.options.logging;
+  sequelize.options.logging = false;
   try {
     yield exports.unload();
 
@@ -20,8 +22,12 @@ exports.load = function *(specificFixtures) {
   } catch (e) {
     console.error(e);
   }
+  sequelize.options.logging = prevSetting;
 };
 
 exports.unload = function *() {
+  var prevSetting = sequelize.options.logging;
+  sequelize.options.logging = false;
   yield sequelize.sync({ force: true });
+  sequelize.options.logging = prevSetting;
 };
