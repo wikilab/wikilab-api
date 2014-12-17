@@ -9,6 +9,10 @@ describe('Model.Session', function() {
       expect(yield Session.getUser(session.token)).to.eql(null);
     });
 
+    it('should return null when token is not found', function *() {
+      expect(yield Session.getUser('not exists session')).to.eql(null);
+    });
+
     it('should return null when token is expired', function *() {
       var session = yield Session.create({ ttl: 600, UserId: fixtures.users[0].id });
       yield session.updateAttributes({ expiredAt: new Date(Date.now() - 1) });

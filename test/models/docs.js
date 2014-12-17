@@ -1,4 +1,5 @@
 var uuid = require('node-uuid').v4;
+var Instance = require('../../node_modules/sequelize/lib/instance.js');
 
 describe('Model.Doc', function() {
   beforeEach(function *() {
@@ -191,6 +192,37 @@ describe('Model.Doc', function() {
         order: [sequelize.col('order')]
       });
       expect(subDocs.map(function(doc) { return doc.id; })).to.eql([3, 5, 4, 6]);
+    });
+
+    it('should rollback when creation fails', function *() {
+      var collection = fixtures.collections[0];
+      var docs = fixtures.docs;
+      yield collection.addDocs(fixtures.docs);
+      var parentDoc = docs[0];
+      yield docs[1].setParent(parentDoc.UUID);
+      yield docs[2].setParent(parentDoc.UUID);
+      yield docs[2].setOrder(0);
+      var originalSave = Instance.prototype.save;
+      var isFirstCall = true;
+      sinon.stub(Instance.prototype, 'save', function() {
+        if (isFirstCall) {
+          isFirstCall = false;
+          return originalSave.apply(this, arguments);
+        }
+        throw new Error('reject');
+      });
+      try {
+        yield docs[1].setOrder(0);
+        throw new Error('should reject');
+      } catch (err) {
+        expect(err.message).to.eql('reject');
+      }
+      var subDocs = yield Doc.findAll({
+        where: { parentUUID: parentDoc.UUID },
+        order: [sequelize.col('order')]
+      });
+      expect(subDocs.map(function(doc) { return doc.id; })).to.eql([3, 2]);
+      Instance.prototype.save.restore();
     });
   });
 });

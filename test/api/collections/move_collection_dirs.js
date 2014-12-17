@@ -67,7 +67,6 @@ describe('POST /collections/:collectionId/dirs/_move', function() {
     yield doc.setParent(fixtures.docs[2].UUID);
     var dirs;
     dirs = yield collection.getDirs();
-    console.log(JSON.stringify(dirs));
     yield api.$auth(user.email, user.password).collections(collection.id).dirs('_move').post({
       UUID: doc.UUID,
       parentUUID: parentDoc.UUID,
