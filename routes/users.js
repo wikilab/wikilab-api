@@ -8,7 +8,7 @@ router.post('/', function *() {
 
   var user = User.build(this.request.body);
   if (isFirstUser) {
-    user.isAdmin = true;
+    user.isOwner = true;
   }
   this.body = yield user.save();
 });

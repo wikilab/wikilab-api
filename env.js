@@ -12,11 +12,11 @@ if (typeof ENV_FLAG === 'undefined') {
   GLOBAL.HTTP_ERROR = require('./errors');
 
   // Middlewares
-  GLOBAL.auth = function(isAdmin) {
+  GLOBAL.auth = function(isOwner) {
     return function *(next) {
       this.assert(this.me, new HTTP_ERROR.Unauthorized());
-      if (isAdmin) {
-        this.assert(this.me.isAdmin, new HTTP_ERROR.NoPermission());
+      if (isOwner) {
+        this.assert(this.me.isOwner, new HTTP_ERROR.NoPermission());
       }
       yield next;
     };

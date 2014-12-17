@@ -13,7 +13,7 @@ describe('POST /teams', function() {
     }
   });
 
-  it('should return NoPermission if is not admin', function *() {
+  it('should return NoPermission if is not owner', function *() {
     var user = fixtures.users[1];
     try {
       yield api.$auth(user.email, user.password).teams.post();

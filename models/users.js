@@ -20,7 +20,7 @@ module.exports = function(DataTypes) {
       type: DataTypes.STRING,
       allowNull: false
     },
-    isAdmin: {
+    isOwner: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: false

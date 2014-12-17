@@ -12,7 +12,7 @@ describe('POST /users', function() {
     expect(user).to.have.property('id');
     expect(user).to.have.property('name', 'Tom');
     expect(user).to.have.property('email', 'tom@email.com');
-    expect(user).to.have.have.property('isAdmin', false);
+    expect(user).to.have.have.property('isOwner', false);
     expect(user).to.not.have.property('password');
   });
 
@@ -51,6 +51,6 @@ describe('POST /users', function() {
     var user = yield User.find({
       where: { id: returnedUser.id }
     });
-    expect(user.isAdmin).to.eql(true);
+    expect(user.isOwner).to.eql(true);
   });
 });

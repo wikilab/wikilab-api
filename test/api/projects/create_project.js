@@ -11,7 +11,7 @@ describe('POST /projects', function() {
     }
   });
 
-  it('should return NoPermission if user is not admin', function *() {
+  it('should return NoPermission if user is not ower', function *() {
     var user = fixtures.users[1];
     try {
       yield api.$auth(user.email, user.password).projects.post();

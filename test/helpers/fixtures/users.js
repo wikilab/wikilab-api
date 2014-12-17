@@ -4,7 +4,7 @@ exports.load = function *() {
       email: 'bob@email.com',
       name: 'Bob',
       password: 'bobpassword',
-      isAdmin: true
+      isOwner: true
     }),
     yield User.create({
       email: 'jeff@email.com',
