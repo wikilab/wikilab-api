@@ -49,8 +49,27 @@ router.post('/:collectionId/dirs/_move', function *() {
     }
   }
   if (typeof body.order !== 'undefined') {
-    console.log(body.order);
     yield doc.setOrder(body.order);
   }
   this.body = 'ok';
+});
+
+router.post('/:collectionId/docs', function *() {
+  this.assert(this.checkPermission('write'), new HTTP_ERROR.NoPermission());
+  var body = this.request.body;
+  this.assert(body && body.title, new HTTP_ERROR.InvalidParameter('title is required'));
+  this.assert(body.content, new HTTP_ERROR.InvalidParameter('content is required'));
+
+  var doc;
+  try {
+    doc = yield Doc.createWithTransaction({
+      CollectionId: this.collection.id,
+      title: body.title,
+      content: body.content,
+      parentUUID: body.parentUUID
+    });
+  } catch (err) {
+    this.throw(new HTTP_ERROR.InvalidParameter(err.message));
+  }
+  this.body = doc;
 });

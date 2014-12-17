@@ -113,3 +113,10 @@ Move the doc in the dirs.
 
 [Test](test/api/collections/move_collection_dirs.js)
 [Code](routes/collections.js)
+
+**POST** `/collections/:collectionId/docs`
+
+Create a doc
+
+[Test](test/api/collections/create_doc.js)
+[Code](routes/collections.js)
