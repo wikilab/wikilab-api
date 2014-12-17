@@ -84,6 +84,13 @@ Get the specified project info
 [Test](test/api/projects/get_project.js)
 [Code](routes/projects.js)
 
+**PUT** `/projects/:projectId/teams/:teamId`
+
+Update the permission of the team to the project
+
+[Test](test/api/projects/update_team_permission.js)
+[Code](routes/projects.js)
+
 ### Collections
 
 **Get** `/collections/:collectionId`

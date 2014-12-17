@@ -73,3 +73,36 @@ router.get('/:projectId', function *() {
 
   this.body = this.project;
 });
+
+router.put('/:projectId/teams/:teamId', function *() {
+  var havePermission = this.me.isOwner || (yield this.me.havePermission(this.project, 'admin'));
+  this.assert(havePermission, new HTTP_ERROR.NoPermission());
+  this.assert(this.request.body && typeof this.request.body.permission !== 'undefined',
+              new HTTP_ERROR.InvalidParameter('permission is required'));
+
+  var team = yield Team.find({
+    where: { id: this.params.teamId },
+    attributes: ['id']
+  });
+  this.assert(team, new HTTP_ERROR.NotFound());
+  var relation = yield ProjectTeam.find({
+    where: { TeamId: team.id, ProjectId: this.project.id }
+  });
+  var previous = relation ? relation.permission : null;
+  var current = this.request.body.permission;
+  if (previous !== current) {
+    if (relation) {
+      if (current) {
+        relation.permission = current;
+        yield relation.save();
+      } else {
+        yield relation.destroy();
+      }
+    } else {
+      yield this.project.addTeams(team, { permission: current });
+    }
+  }
+  this.body = {
+    permission: { previous: previous, current: current }
+  };
+});

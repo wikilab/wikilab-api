@@ -5,6 +5,8 @@ module.exports = function(DataTypes) {
       allowNull: false
     }
   }, {
+    timestamps: true,
+    updatedAt: false,
     instanceMethods: {
       getDirs: function *() {
         var docs = yield this.getDocs({ attributes: ['UUID', 'parentUUID', 'title', 'order'] });

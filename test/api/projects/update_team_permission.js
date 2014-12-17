@@ -1,4 +1,4 @@
-describe.only('PUT /projects/:projectId/teams/:teamId', function() {
+describe('PUT /projects/:projectId/teams/:teamId', function() {
   beforeEach(function *() {
     yield fixtures.load(['users', 'projects', 'teams']);
     this.project = fixtures.projects[0];
