@@ -1,19 +1,21 @@
 var router = module.exports = new (require('koa-router'))();
 
 router.param('docUUID', function *(id, next) {
-  this.prevDoc = yield Doc.find({
-    where: { UUID: id, current: true },
-    include: [{
-      model: Collection,
-      attributes: ['id'],
-      required: true,
+  try {
+    this.prevDoc = yield Doc.find({
+      where: { UUID: id, current: true },
       include: [{
-        model: Project,
+        model: Collection,
         attributes: ['id'],
-        required: true
+        required: true,
+        include: [{
+          model: Project,
+          attributes: ['id'],
+          required: true
+        }]
       }]
-    }]
-  });
+    });
+  } catch (err) {}
   this.assert(this.prevDoc, new HTTP_ERROR.NotFound('Doc %s', id));
 
   this.permission = yield this.me.getPermission(this.prevDoc.Collection.Project);
