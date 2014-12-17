@@ -10,6 +10,11 @@ exports.load = function *() {
       email: 'jeff@email.com',
       name: 'Jeff',
       password: 'jeffpassword'
+    }),
+    yield User.create({
+      email: 'alex@email.com',
+      name: 'Alex',
+      password: 'alexpassword'
     })
   ];
 };
