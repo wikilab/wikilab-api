@@ -1,9 +1,15 @@
 var router = module.exports = new (require('koa-router'))();
 
 router.param('docUUID', function *(id, next) {
+  var query = { UUID: id };
+  if (this.query.version) {
+    query.version = this.query.version;
+  } else {
+    query.current = true;
+  }
   try {
-    this.prevDoc = yield Doc.find({
-      where: { UUID: id, current: true },
+    this.doc = yield Doc.find({
+      where: query,
       include: [{
         model: Collection,
         attributes: ['id'],
@@ -16,14 +22,19 @@ router.param('docUUID', function *(id, next) {
       }]
     });
   } catch (err) {}
-  this.assert(this.prevDoc, new HTTP_ERROR.NotFound('Doc %s', id));
+  this.assert(this.doc, new HTTP_ERROR.NotFound('Doc %s', id));
 
-  this.permission = yield this.me.getPermission(this.prevDoc.Collection.Project);
+  this.permission = yield this.me.getPermission(this.doc.Collection.Project);
 
   this.checkPermission = function(permission) {
     return ProjectTeam.higherPermission(permission, this.permission) === this.permission;
   };
   yield next;
+});
+
+router.get('/:docUUID', function *() {
+  this.assert(this.checkPermission('read'), new HTTP_ERROR.NoPermission());
+  this.body = this.doc;
 });
 
 router.patch('/:docUUID', function *() {
@@ -34,25 +45,25 @@ router.patch('/:docUUID', function *() {
   var changed = _.intersection(properties, Object.keys(body));
 
   changed = changed.filter(function(key) {
-    return body[key] !== this.prevDoc[key];
+    return body[key] !== this.doc[key];
   }, this);
 
-  var doc = this.prevDoc;
+  var doc = this.doc;
   if (changed.length) {
     doc = yield Doc.createWithTransaction({
-      CollectionId: this.prevDoc.CollectionId,
-      UUID: this.prevDoc.UUID,
-      title: typeof body.title === 'string' ? body.title : this.prevDoc.title,
-      content: typeof body.content === 'string' ? body.content : this.prevDoc.content
+      CollectionId: this.doc.CollectionId,
+      UUID: this.doc.UUID,
+      title: typeof body.title === 'string' ? body.title : this.doc.title,
+      content: typeof body.content === 'string' ? body.content : this.doc.content
     });
   }
 
   this.body = {
     versions: {
-      previous: this.prevDoc.version,
+      previous: this.doc.version,
       current: doc.version
     },
-    distance: this.prevDoc === doc ? 0 : doc.distance,
+    distance: this.doc === doc ? 0 : doc.distance,
     changedProperties: changed || []
   };
 });
