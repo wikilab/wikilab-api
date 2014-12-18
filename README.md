@@ -130,6 +130,13 @@ Get the doc.You can use `?version=:version` to specified a version
 [Test](test/api/docs/get_doc.js)
 [Code](routes/docs.js)
 
+GET `/docs/:docUUID/versions`
+
+Get the versions of the doc
+
+[Test](test/api/docs/get_doc_versions.js)
+[Code](routes/docs.js)
+
 **PATCH** `/docs/:docUUID`
 
 Update the title or content of the doc

@@ -67,3 +67,36 @@ router.patch('/:docUUID', function *() {
     changedProperties: changed || []
   };
 });
+
+router.get('/:docUUID/versions', function *() {
+  this.assert(this.checkPermission('read'), new HTTP_ERROR.NoPermission());
+  var attributes = ['version', 'distance', 'createdAt'];
+  var options = {
+    where: { UUID: this.doc.UUID },
+    order: [sequelize.col('version')],
+    attributes: attributes
+  };
+  if (this.query.fields) {
+    var fields = this.query.fields.split(',').map(function(field) {
+      return field.trim();
+    });
+    if (fields.indexOf('title') !== -1) {
+      attributes.push('title');
+    }
+    if (fields.indexOf('content') !== -1) {
+      attributes.push('content');
+    }
+    if (fields.indexOf('author') !== -1) {
+      options.include = [{ model: User, attributes: ['id', 'name'] }];
+    }
+  }
+  var versions = yield this.doc.Collection.getDocs(options);
+  this.body = versions.map(function(version) {
+    version = version.dataValues;
+    if (typeof version.User !== 'undefined') {
+      version.author = version.User;
+      delete version.User;
+    }
+    return version;
+  });
+});

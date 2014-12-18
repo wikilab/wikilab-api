@@ -46,6 +46,10 @@ exports.Doc.belongsTo(exports.Collection, { constraints: false });
 exports.Project.hasMany(exports.Collection, { constraints: false });
 exports.Collection.belongsTo(exports.Project, { constraints: false });
 
+exports.User.hasOne(exports.Doc, { constraints: false });
+exports.Doc.belongsTo(exports.User, { constraints: false });
+
+
 exports.User.hasOne(exports.Session, { constraints: false });
 exports.Session.belongsTo(exports.User, { constraints: false });
 
