@@ -14,6 +14,8 @@ router.post('/', function *() {
 });
 
 router.param('user', function *(id, next) {
+  this.assert(this.me, new HTTP_ERROR.Unauthorized());
+
   if (id === 'me') {
     this.user = this.me;
   } else {
@@ -21,6 +23,10 @@ router.param('user', function *(id, next) {
   }
   this.assert(this.user, new HTTP_ERROR.NotFound('User', id));
   yield next;
+});
+
+router.get('/:user', function *(next) {
+  this.body = this.user;
 });
 
 router.patch('/:user', function *(next) {

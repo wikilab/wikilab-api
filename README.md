@@ -31,6 +31,13 @@ Create a new session and get the token. You need to specify a ttl(measured in se
 
 ### Users
 
+**GET** `/users/{userId|'me'}`
+
+Get the info of the user
+
+[Test](test/api/users/get_user.js)
+[Code](routes/users.js)
+
 **POST** `/users`
 
 Create a new user
