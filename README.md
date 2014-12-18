@@ -54,6 +54,13 @@ Update the current user's password
 
 ### Teams
 
+**GET** `/teams`
+
+Get all teams
+
+[Test](test/api/teams/get_teams.js)
+[Code](routes/teams.js)
+
 **POST** `/teams`
 
 Create a new team

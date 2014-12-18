@@ -77,9 +77,7 @@ router.get('/:docUUID/versions', function *() {
     attributes: attributes
   };
   if (this.query.fields) {
-    var fields = this.query.fields.split(',').map(function(field) {
-      return field.trim();
-    });
+    var fields = this.query.fields.split(',');
     if (fields.indexOf('title') !== -1) {
       attributes.push('title');
     }
