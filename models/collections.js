@@ -3,6 +3,9 @@ module.exports = function(DataTypes) {
     name: {
       type: DataTypes.STRING,
       allowNull: false
+    },
+    order: {
+      type: DataTypes.INTEGER
     }
   }, {
     timestamps: true,
@@ -34,6 +37,43 @@ module.exports = function(DataTypes) {
           }
         });
         return removeUnnessaryPropertiesAndSort(dirs);
+      },
+      setOrder: function *(order) {
+        var t = yield sequelize.transaction();
+        try {
+          var collections = yield Collection.findAll({
+            where: { ProjectId: this.ProjectId },
+            attributes: ['id', 'order', 'createdAt']
+          }, {
+            transaction: t,
+            lock: t.LOCK.UPDATE
+          });
+          collections.sort(function(a, b) {
+            if (typeof a.order === 'number' && typeof b.order === 'number') {
+              return a.order - b.order;
+            } else {
+              return a.createdAt - b.createdAt;
+            }
+          });
+          var thisInstance, i;
+          for (i = 0; i < collections.length; ++i) {
+            if (collections[i].id === this.id) {
+              thisInstance = collections[i];
+              collections.splice(i, 1);
+              break;
+            }
+          }
+          collections.splice(order, 0, thisInstance);
+          for (i = 0; i < collections.length; ++i) {
+            if (collections[i].order !== i) {
+              yield collections[i].updateAttributes({ order: i }, { transaction: t, silent: true });
+            }
+          }
+          t.commit();
+        } catch (err) {
+          t.rollback();
+          throw err;
+        }
       }
     }
   }];

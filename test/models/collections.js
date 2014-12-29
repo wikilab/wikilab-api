@@ -1,6 +1,6 @@
 describe('Model.Collection', function() {
   beforeEach(function *() {
-    yield fixtures.load(['docs', 'collections']);
+    yield fixtures.load(['docs', 'collections', 'projects']);
   });
 
   describe('#getDirs()', function() {
@@ -30,6 +30,33 @@ describe('Model.Collection', function() {
       expect(dirs[0].children[0].children[1].UUID).to.eql(docs[4].UUID);
       expect(dirs[0].children[0].children[2].UUID).to.eql(docs[3].UUID);
       expect(dirs[0].children[0].children[3].UUID).to.eql(docs[2].UUID);
+    });
+  });
+
+  describe('#setOrder()', function() {
+    it('should set the order', function *() {
+      var collections = fixtures.collections;
+      var project = fixtures.projects[0];
+      yield project.addCollections([collections[0], collections[1], collections[2]]);
+      var i;
+
+      yield collections[1].setOrder(0);
+      for (i = 0; i < 4; ++i) {
+        yield collections[i].reload();
+      }
+      expect(collections[0]).to.have.property('order', 1);
+      expect(collections[1]).to.have.property('order', 0);
+      expect(collections[2]).to.have.property('order', 2);
+      expect(collections[3]).to.have.property('order', null);
+
+      yield collections[2].setOrder(1);
+      for (i = 0; i < 4; ++i) {
+        yield collections[i].reload();
+      }
+      expect(collections[0]).to.have.property('order', 2);
+      expect(collections[1]).to.have.property('order', 0);
+      expect(collections[2]).to.have.property('order', 1);
+      expect(collections[3]).to.have.property('order', null);
     });
   });
 });
