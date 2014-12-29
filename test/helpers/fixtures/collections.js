@@ -5,6 +5,12 @@ exports.load = function *() {
     }),
     yield Collection.create({
       name: 'collection1'
+    }),
+    yield Collection.create({
+      name: 'collection2'
+    }),
+    yield Collection.create({
+      name: 'collection3'
     })
   ];
 };
