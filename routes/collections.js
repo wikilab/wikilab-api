@@ -22,6 +22,14 @@ router.get('/:collectionId', function *() {
   this.body = this.collection;
 });
 
+router.post('/:collectionId/_move', function *() {
+  this.assert(this.checkPermission('write'), new HTTP_ERROR.NoPermission());
+  this.assert(this.body.order, new HTTP_ERROR.InvalidParameter('order is required'));
+
+  this.collection.setOrder(this.body.order);
+  this.body = 'ok';
+});
+
 router.get('/:collectionId/dirs', function *() {
   this.assert(this.checkPermission('read'), new HTTP_ERROR.NoPermission());
   this.body = yield this.collection.getDirs();

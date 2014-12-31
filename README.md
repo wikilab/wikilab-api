@@ -121,7 +121,7 @@ Get the dirs of a collection
 [Test](test/api/collections/get_collection_dirs.js)
 [Code](routes/collections.js)
 
-**POST** `/collections/:collectionId/_move`
+**POST** `/collections/:collectionId/dirs/_move`
 
 Move the doc in the dirs
 
@@ -133,6 +133,13 @@ Move the doc in the dirs
 Create a doc
 
 [Test](test/api/collections/create_doc.js)
+[Code](routes/collections.js)
+
+**POST** `/collections/:collectionId/_move`
+
+Move a collection
+
+[Test](test/api/collections/move_collection.js)
 [Code](routes/collections.js)
 
 ### Docs
