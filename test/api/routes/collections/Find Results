@@ -1,0 +1,520 @@
+Searching 34 files for "api."
+
+/Users/luin/opensource/wikilab/wikilab-api/test/api/routes/collections/create_doc.js:
+   13    it('should return Unauthorized when user is unauthorized', function *() {
+   14      try {
+   15:       yield API.collections(fixtures.collections[0].id).docs.post();
+   16        throw new Error('should reject');
+   17      } catch (err) {
+   ..
+   22    it('should return NotFound when collection is not found', function *() {
+   23      try {
+   24:       yield API.$auth(this.writer.email, this.writer.password).collections(1993).docs.post();
+   25        throw new Error('should reject');
+   26      } catch (err) {
+   ..
+   32      var collection = fixtures.collections[0];
+   33      try {
+   34:       yield API.$auth(this.reader.email, this.reader.password).collections(collection.id).docs.post();
+   35        throw new Error('should reject');
+   36      } catch (err) {
+   ..
+   41    it('should return InvalidParameter when parameters are invalid', function *() {
+   42      var collection = fixtures.collections[0];
+   43:     var base = API.$auth(this.writer.email, this.writer.password).collections(collection.id).docs;
+   44      try {
+   45        yield base.post();
+   ..
+   58    it('should create a new doc', function *() {
+   59      var collection = fixtures.collections[0];
+   60:     var doc = yield API.$auth(this.writer.email, this.writer.password).collections(collection.id).docs.post({
+   61        title: 'new title',
+   62        content: 'new content'
+   ..
+   75      var parentDoc = fixtures.docs[0];
+   76      yield collection.addDocs(parentDoc);
+   77:     var doc = yield API.$auth(this.writer.email, this.writer.password).collections(collection.id).docs.post({
+   78        title: 'new title',
+   79        content: 'new content',
+   ..
+   86      var collection = fixtures.collections[0];
+   87      try {
+   88:       yield API.$auth(this.writer.email, this.writer.password).collections(collection.id).docs.post({
+   89          title: 'new title',
+   90          content: 'new content',
+
+/Users/luin/opensource/wikilab/wikilab-api/test/api/routes/collections/get_collection.js:
+   15    it('should return Unauthorized when user is unauthorized', function *() {
+   16      try {
+   17:       yield API.collections(fixtures.collections[0].id).get();
+   18        throw new Error('should reject');
+   19      } catch (err) {
+   ..
+   24    it('should return NotFound when collection is not found', function *() {
+   25      try {
+   26:       yield API.$auth(this.reader.email, this.reader.password).collections(1993).get();
+   27        throw new Error('should reject');
+   28      } catch (err) {
+   ..
+   34      var collection = fixtures.collections[0];
+   35      try {
+   36:       yield API.$auth(this.guest.email, this.guest.password).collections(collection.id).get();
+   37        throw new Error('should reject');
+   38      } catch (err) {
+   ..
+   44      var project = fixtures.projects[0];
+   45      var collection = fixtures.collections[0];
+   46:     var returnedCollection = yield API.$auth(this.reader.email, this.reader.password).collections(collection.id).get();
+   47      expect(returnedCollection).to.have.property('id', collection.id);
+   48      expect(returnedCollection).to.have.property('name', collection.name);
+
+/Users/luin/opensource/wikilab/wikilab-api/test/api/routes/collections/get_collection_dirs.js:
+   11    it('should return Unauthorized when user is unauthorized', function *() {
+   12      try {
+   13:       yield API.collections(fixtures.collections[0].id).dirs.get();
+   14        throw new Error('should reject');
+   15      } catch (err) {
+   ..
+   20    it('should return NotFound when collection is not found', function *() {
+   21      try {
+   22:       yield API.$auth(this.reader.email, this.reader.password).collections(1993).dirs.get();
+   23        throw new Error('should reject');
+   24      } catch (err) {
+   ..
+   30      var collection = fixtures.collections[0];
+   31      try {
+   32:       yield API.$auth(this.guest.email, this.guest.password).collections(collection.id).dirs.get();
+   33        throw new Error('should reject');
+   34      } catch (err) {
+   ..
+   43      yield fixtures.docs[2].setParent(fixtures.docs[0].UUID);
+   44      yield fixtures.docs[3].setParent(fixtures.docs[2].UUID);
+   45:     var dirs = yield API.$auth(this.reader.email, this.reader.password).collections(collection.id).dirs.get();
+   46      expect(dirs).to.have.length(1);
+   47      expect(dirs[0].children).to.have.length(2);
+
+/Users/luin/opensource/wikilab/wikilab-api/test/api/routes/collections/move_collection_dirs.js:
+   13    it('should return Unauthorized when user is unauthorized', function *() {
+   14      try {
+   15:       yield API.collections(fixtures.collections[0].id).dirs('_move').post();
+   16        throw new Error('should reject');
+   17      } catch (err) {
+   ..
+   22    it('should return NotFound when collection is not found', function *() {
+   23      try {
+   24:       yield API.$auth(this.writer.email, this.writer.password).collections(1993).dirs('_move').post();
+   25        throw new Error('should reject');
+   26      } catch (err) {
+   ..
+   32      var collection = fixtures.collections[0];
+   33      try {
+   34:       yield API.$auth(this.reader.email, this.reader.password).collections(collection.id).dirs('_move').post();
+   35        throw new Error('should reject');
+   36      } catch (err) {
+   ..
+   41    it('should return InvalidParameter when parameters are invalid', function *() {
+   42      var collection = fixtures.collections[0];
+   43:     var base = API.$auth(this.writer.email, this.writer.password).collections(collection.id).dirs('_move');
+   44      try {
+   45        yield base.post();
+   ..
+   66      var dirs;
+   67      dirs = yield collection.getDirs();
+   68:     yield API.$auth(this.writer.email, this.writer.password).collections(collection.id).dirs('_move').post({
+   69        UUID: doc.UUID,
+   70        parentUUID: parentDoc.UUID,
+
+/Users/luin/opensource/wikilab/wikilab-api/test/api/routes/docs/get_doc.js:
+   13    it('should return Unauthorized when user is unauthorized', function *() {
+   14      try {
+   15:       yield API.docs(this.doc.UUID).get();
+   16        throw new Error('should reject');
+   17      } catch (err) {
+   ..
+   22    it('should return NotFound when doc is not found', function *() {
+   23      try {
+   24:       yield API.$auth(this.reader.email, this.reader.password).docs('not exists UUID').get();
+   25        throw new Error('should reject');
+   26      } catch (err) {
+   ..
+   32      var guest = fixtures.users[2];
+   33      try {
+   34:       yield API.$auth(guest.email, guest.password).docs(this.doc.UUID).get();
+   35        throw new Error('should reject');
+   36      } catch (err) {
+   ..
+   46        content: 'new content'
+   47      });
+   48:     var doc = yield API.$auth(this.reader.email, this.reader.password).docs(this.doc.UUID).get();
+   49      expect(doc.title).to.eql('new title');
+   50      expect(doc.content).to.eql('new content');
+   ..
+   67          content: 'version 2'
+   68        });
+   69:     var doc = yield API.$auth(this.reader.email, this.reader.password).docs(this.doc.UUID).get({
+   70        version: version1.version
+   71      });
+
+/Users/luin/opensource/wikilab/wikilab-api/test/api/routes/docs/get_doc_versions.js:
+   13    it('should return Unauthorized when user is unauthorized', function *() {
+   14      try {
+   15:       yield API.docs(this.doc.UUID).versions.get();
+   16        throw new Error('should reject');
+   17      } catch (err) {
+   ..
+   22    it('should return NotFound when doc is not found', function *() {
+   23      try {
+   24:       yield API.$auth(this.reader.email, this.reader.password).docs('not exists UUID').versions.get();
+   25        throw new Error('should reject');
+   26      } catch (err) {
+   ..
+   32      var guest = fixtures.users[2];
+   33      try {
+   34:       yield API.$auth(guest.email, guest.password).docs(this.doc.UUID).versions.get();
+   35        throw new Error('should reject');
+   36      } catch (err) {
+   ..
+   46        content: 'new content'
+   47      });
+   48:     var versions = yield API.$auth(this.reader.email, this.reader.password).docs(this.doc.UUID).versions.get();
+   49      expect(versions).to.have.length(2);
+   50      expect(versions[0]).to.have.property('version', 1);
+   ..
+   57    describe('?fields=title,author,content', function() {
+   58      it('should also return the specified fields', function *() {
+   59:       var version = (yield API.$auth(this.reader.email, this.reader.password).docs(this.doc.UUID).versions.get({
+   60          fields: 'title,author,content'
+   61        }))[0];
+
+/Users/luin/opensource/wikilab/wikilab-api/test/api/routes/docs/update_doc.js:
+   16    it('should return Unauthorized when user is unauthorized', function *() {
+   17      try {
+   18:       yield API.docs(this.doc.UUID).patch();
+   19        throw new Error('should reject');
+   20      } catch (err) {
+   ..
+   25    it('should return NotFound when doc is not found', function *() {
+   26      try {
+   27:       yield API.$auth(this.writer.email, this.writer.password).docs('not exists UUID').patch();
+   28        throw new Error('should reject');
+   29      } catch (err) {
+   ..
+   34    it('should return NoPermission when the user don\'t have write permission', function *() {
+   35      try {
+   36:       yield API.$auth(this.reader.email, this.reader.password).docs(this.doc.UUID).patch();
+   37        throw new Error('should reject');
+   38      } catch (err) {
+   ..
+   43    it('should update the title or content', function *() {
+   44      var result;
+   45:     result = yield API.$auth(this.writer.email, this.writer.password).docs(this.doc.UUID).patch({
+   46        title: this.doc.title.repeat(2)
+   47      });
+   ..
+   50      expect(result.versions.current).to.eql(this.doc.version + 1);
+   51      expect(result.distance).to.eql(this.doc.title.length);
+   52:     result = yield API.$auth(this.writer.email, this.writer.password).docs(this.doc.UUID).patch({
+   53        content: this.doc.content.repeat(2)
+   54      });
+
+/Users/luin/opensource/wikilab/wikilab-api/test/api/routes/projects/create_project.js:
+    6    it('should return Unauthorized when user is unauthorized', function *() {
+    7      try {
+    8:       yield API.projects.post();
+    9      } catch (err) {
+   10        expect(err).to.be.an.error(HTTP_ERROR.Unauthorized);
+   ..
+   15      var user = fixtures.users[1];
+   16      try {
+   17:       yield API.$auth(user.email, user.password).projects.post();
+   18      } catch (err) {
+   19        expect(err).to.be.an.error(HTTP_ERROR.NoPermission);
+   ..
+   24      var user = fixtures.users[0];
+   25      try {
+   26:       yield API.$auth(user.email, user.password).projects.post();
+   27      } catch (err) {
+   28        expect(err).to.be.an.error(HTTP_ERROR.InvalidParameter);
+   ..
+   32    it('should create project successfully', function *() {
+   33      var user = fixtures.users[0];
+   34:     var returnedProject = yield API.$auth(user.email, user.password).projects.post({
+   35        name: 'new project'
+   36      });
+
+/Users/luin/opensource/wikilab/wikilab-api/test/api/routes/projects/get_project.js:
+    9    it('should return Unauthorized when user is unauthorized', function *() {
+   10      try {
+   11:       yield API.projects(fixtures.projects[0].id).get();
+   12        throw new Error('should reject');
+   13      } catch (err) {
+   ..
+   19      var user = fixtures.users[0];
+   20      try {
+   21:       yield API.$auth(user.email, user.password).projects(1993).get();
+   22        throw new Error('should reject');
+   23      } catch (err) {
+   ..
+   30      var project = fixtures.projects[0];
+   31      try {
+   32:       yield API.$auth(user.email, user.password).projects(project.id).get();
+   33        throw new Error('should reject');
+   34      } catch (err) {
+   ..
+   40      var user = fixtures.users[0];
+   41      var project = fixtures.projects[0];
+   42:     var returnedProject = yield API.$auth(user.email, user.password).projects(project.id).get();
+   43      expect(returnedProject).to.have.property('id', project.id);
+   44      expect(returnedProject).to.have.property('name', project.name);
+
+/Users/luin/opensource/wikilab/wikilab-api/test/api/routes/projects/get_projects.js:
+   23    it('should return Unauthorized when user is unauthorized', function *() {
+   24      try {
+   25:       yield API.projects.get();
+   26        throw new Error('should reject');
+   27      } catch (err) {
+   ..
+   32    it('should return all my projects with correct permission', function *() {
+   33      var user = fixtures.users[0];
+   34:     var projects = yield API.$auth(user.email, user.password).projects.get();
+   35      expect(projects).to.have.length(4);
+   36      projects.forEach(function(project) {
+   ..
+   55      it('should filter permission', function *() {
+   56        var user = fixtures.users[0];
+   57:       var projects = yield API.$auth(user.email, user.password).projects.get({
+   58          permission: 'write'
+   59        });
+   ..
+   67        it('should support sort id ' + order, function *() {
+   68          var user = fixtures.users[0];
+   69:         var projects = yield API.$auth(user.email, user.password).projects.get({
+   70            sort: (order === 'asc' ? '+' : '-') + 'id'
+   71          });
+
+/Users/luin/opensource/wikilab/wikilab-api/test/api/routes/projects/update_team_permission.js:
+   15    it('should return Unauthorized when user is unauthorized', function *() {
+   16      try {
+   17:       yield API.projects(this.project.id).teams(this.team.id).put();
+   18      } catch (err) {
+   19        expect(err).to.be.an.error(HTTP_ERROR.Unauthorized);
+   ..
+   23    it('should return NoPermission if user is not owner or admin', function *() {
+   24      try {
+   25:       yield API.$auth(this.user.email, this.user.password).projects(this.project.id).teams(this.team.id).put();
+   26      } catch (err) {
+   27        expect(err).to.be.an.error(HTTP_ERROR.NoPermission);
+   ..
+   31    it('should return NotFound if team is not exists', function *() {
+   32      try {
+   33:       yield API.$auth(this.admin.email, this.admin.password).projects(this.project.id).teams(123).put({ permission: 'read' });
+   34      } catch (err) {
+   35        expect(err).to.be.an.error(HTTP_ERROR.NotFound);
+   ..
+   38  
+   39    it('should update permission successfully if user is owner', function *() {
+   40:     yield API.$auth(this.owner.email, this.owner.password).projects(this.project.id).teams(this.team.id).put({ permission: 'read' });
+   41    });
+   42  
+   43    it('should return InvalidParameter if permission is invalid', function *() {
+   44:     var base = API.$auth(this.admin.email, this.admin.password).projects(this.project.id).teams(this.team.id);
+   45      try {
+   46        yield base.put();
+   ..
+   56  
+   57    it('should update permission successfully and return the previous permission', function *() {
+   58:     var result = yield API.$auth(this.admin.email, this.admin.password).projects(this.project.id).teams(this.team.id).put({ permission: 'read' });
+   59      expect(result.permissions.previous).to.eql('write');
+   60      expect(result.permissions.current).to.eql('read');
+   ..
+   63    it('should return null if team has no permission to the project', function *() {
+   64      var result;
+   65:     result = yield API.$auth(this.admin.email, this.admin.password).projects(this.project.id).teams(this.team.id).put({ permission: null });
+   66      expect(result.permissions.current).to.eql(null);
+   67  
+   68:     result = yield API.$auth(this.admin.email, this.admin.password).projects(this.project.id).teams(this.team.id).put({ permission: 'read' });
+   69      expect(result.permissions.previous).to.eql(null);
+   70    });
+
+/Users/luin/opensource/wikilab/wikilab-api/test/api/routes/sessions/create_session.js:
+    6    it('should return Unauthorized when user is unauthorized', function *() {
+    7      try {
+    8:       yield API.sessions.post({ ttl: 600 });
+    9      } catch (err) {
+   10        expect(err).to.be.an.error(HTTP_ERROR.Unauthorized);
+   ..
+   16      var session = yield Session.create({ ttl: 600, UserId: user.id });
+   17      try {
+   18:       yield API.$header('x-session-token', session.token).sessions.post({ ttl: 600 });
+   19      } catch (err) {
+   20        expect(err).to.be.an.error(HTTP_ERROR.NoPermission);
+   ..
+   24    it('should create a session successfully', function *() {
+   25      var user = fixtures.users[0];
+   26:     var session = yield API.$auth(user.email, user.password).sessions.post({ ttl: 600 });
+   27      expect(session).to.have.property('token');
+   28      expect(session.ttl).to.eql(600);
+
+/Users/luin/opensource/wikilab/wikilab-api/test/api/routes/teams/create_team.js:
+    7    it('should return Unauthorized when user is unauthorized', function *() {
+    8      try {
+    9:       yield API.teams.post();
+   10        throw new Error('should reject');
+   11      } catch (err) {
+   ..
+   17      var user = fixtures.users[1];
+   18      try {
+   19:       yield API.$auth(user.email, user.password).teams.post();
+   20        throw new Error('should reject');
+   21      } catch (err) {
+   ..
+   27      var user = fixtures.users[0];
+   28      try {
+   29:       yield API.$auth(user.email, user.password).teams.post({});
+   30        throw new Error('should reject');
+   31      } catch (err) {
+   ..
+   36    it('should create a user team correctly', function *() {
+   37      var user = fixtures.users[0];
+   38:     var team = yield API.$auth(user.email, user.password).teams.post({
+   39        name: 'team name'
+   40      });
+
+/Users/luin/opensource/wikilab/wikilab-api/test/api/routes/teams/get_teams.js:
+    8    it('should return Unauthorized when user is unauthorized', function *() {
+    9      try {
+   10:       yield API.teams.post();
+   11        throw new Error('should reject');
+   12      } catch (err) {
+   ..
+   16  
+   17    it('should return all teams', function *() {
+   18:     var teams = yield API.$auth(this.user.email, this.user.password).teams.get();
+   19      expect(teams).to.have.length(fixtures.teams.length);
+   20  
+   ..
+   26    describe('?fields=users', function() {
+   27      it('should include specified fields', function *() {
+   28:       var teams = yield API.$auth(this.user.email, this.user.password).teams.get({ fields: 'users' });
+   29        var team = teams[0];
+   30        expect(team).to.have.property('users');
+
+/Users/luin/opensource/wikilab/wikilab-api/test/api/routes/users/create_user.js:
+    5  
+    6    it('should create a user and return the appropriate properties', function *() {
+    7:     var user = yield API.users.post({
+    8        name: 'Tom',
+    9        email: 'tom@email.com',
+   ..
+   20      yield Setting.set('enableSignUp', false);
+   21      try {
+   22:       yield API.users.post({
+   23          name: 'Tom',
+   24          email: 'tom@email.com',
+   ..
+   33    it('should return InvalidParameter when missing required properties', function *() {
+   34      try {
+   35:       yield API.users.post({
+   36          email: 'tom@email.com'
+   37        });
+   ..
+   44    it('should become admin if one is the first user', function *() {
+   45      yield fixtures.unload();
+   46:     var returnedUser = yield API.users.post({
+   47        name: 'Tom',
+   48        email: 'tom@email.com',
+
+/Users/luin/opensource/wikilab/wikilab-api/test/api/routes/users/get_user.js:
+    7    it('should return Unauthorized when user is unauthorized', function *() {
+    8      try {
+    9:       yield API.users(fixtures.users[0]).get();
+   10        throw new Error('should reject');
+   11      } catch (err) {
+   ..
+   15  
+   16    it('should return info', function *() {
+   17:     var user = yield API.$auth(this.user.email, this.user.password).users(this.user.id).get();
+   18      expect(user).to.have.property('name', this.user.name);
+   19      expect(user).to.have.property('isOwner', this.user.isOwner);
+   ..
+   23  
+   24    it('should be able to get others info', function *() {
+   25:     var user = yield API.$auth(fixtures.users[1].email, fixtures.users[1].password).users(this.user.id).get();
+   26      expect(user).to.have.property('name', this.user.name);
+   27      expect(user).to.have.property('isOwner', this.user.isOwner);
+   ..
+   32    describe('alias me', function() {
+   33      it('should return info', function *() {
+   34:       var me = yield API.$auth(this.user.email, this.user.password).users('me').get();
+   35        expect(me).to.have.property('name', this.user.name);
+   36        expect(me).to.have.property('isOwner', this.user.isOwner);
+
+/Users/luin/opensource/wikilab/wikilab-api/test/api/routes/users/patch_user.js:
+    6    it('should return Unauthorized when user is unauthorized', function *() {
+    7      try {
+    8:       yield API.users('me').patch();
+    9        throw new Error('should reject');
+   10      } catch (err) {
+   ..
+   16      var user = fixtures.users[0];
+   17      try {
+   18:       yield API.$auth(user.email, user.password).users(fixtures.users[1].id).patch();
+   19        throw new Error('should reject');
+   20      } catch (err) {
+   ..
+   26      var user = fixtures.users[0];
+   27      try {
+   28:       yield API.$auth(user.email, user.password).users(123456789).patch();
+   29        throw new Error('should reject');
+   30      } catch (err) {
+   ..
+   35    it('should allow empty body', function *() {
+   36      var user = fixtures.users[0];
+   37:     var result = yield API.$auth(user.email, user.password).users(user.id).patch();
+   38      expect(result.changedProperties).to.eql([]);
+   39    });
+   ..
+   41    it('should update the specific properties', function *() {
+   42      var user = fixtures.users[0];
+   43:     var result = yield API.$auth(user.email, user.password).users(user.id).patch({
+   44        name: 'updated name'
+   45      });
+   ..
+   50    it('should support alias "me"', function *() {
+   51      var user = fixtures.users[0];
+   52:     yield API.$auth(user.email, user.password).users('me').patch({
+   53        name: 'updated name'
+   54      });
+
+/Users/luin/opensource/wikilab/wikilab-api/test/api/routes/users/update_password.js:
+    6    it('should return Unauthorized when user is unauthorized', function *() {
+    7      try {
+    8:       yield API.users('me').password.put();
+    9        throw new Error('should reject');
+   10      } catch (err) {
+   ..
+   16      var user = fixtures.users[0];
+   17      try {
+   18:       yield API.$auth(user.email, user.password).users(fixtures.users[1].id).password.put();
+   19        throw new Error('should reject');
+   20      } catch (err) {
+   ..
+   26      var user = fixtures.users[0];
+   27      try {
+   28:       yield API.$auth(user.email, user.password).users(123456789).password.put();
+   29        throw new Error('should reject');
+   30      } catch (err) {
+   ..
+   36      var user = fixtures.users[0];
+   37      try {
+   38:       yield API.$auth(user.email, user.password).users(user.id).password.put({
+   39          newPassword: 'updated password',
+   40        });
+   ..
+   47    it('should change the password successfully with correct old password', function *() {
+   48      var user = fixtures.users[0];
+   49:     yield API.$auth(user.email, user.password).users(user.id).password.put({
+   50        oldPassword: user.password,
+   51        newPassword: 'new password'
+
+84 matches across 18 files

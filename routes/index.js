@@ -1,8 +1,25 @@
-var routes = require('node-require-directory')(__dirname);
-var mount = require('koa-mount');
+var router = module.exports = new (require('koa-router'))();
 
-module.exports = function(app) {
-  Object.keys(routes).forEach(function(key) {
-    app.use(mount('/' + key, routes[key].middleware()));
-  });
-};
+function *renderIndex(next) {
+  this.locals.me = yield this.api.users('me').get();
+  this.locals.projects = yield this.api.projects.get();
+
+  if (this.locals.projects.length) {
+    if (this.params.projectId) {
+      this.locals.currentProject = yield this.api.projects(this.params.projectId).get();
+    } else {
+      this.locals.currentProject = yield this.api.projects(this.locals.projects[0].id).get();
+    }
+  } else {
+    this.locals.currentProject = null;
+  }
+  yield next;
+}
+
+router.get('/', renderIndex, function *() {
+  yield this.render('index');
+});
+
+router.get('/projects/:projectId', renderIndex, function *() {
+  yield this.render('index');
+});

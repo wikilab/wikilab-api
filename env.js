@@ -1,9 +1,11 @@
-if (typeof ENV_FLAG === 'undefined') {
-  GLOBAL.ENV_FLAG = true;
+GLOBAL._ = require('lodash');
+GLOBAL.$config = require('config');
 
-  GLOBAL._ = require('lodash');
-
-  GLOBAL.$config = require('config');
-  GLOBAL.HTTP_ERROR = require('./errors');
-  _.assign(GLOBAL, require('./models'));
-}
+var tser = require('tser');
+Object.defineProperty(GLOBAL, 'API', {
+  get: function() {
+    return tser('http://127.0.0.1:' + $config.port + '/api', {
+      defaults: { json: true }
+    });
+  }
+});

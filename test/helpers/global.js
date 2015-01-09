@@ -1,8 +1,11 @@
 var chai = require('chai');
 
-global.expect = chai.expect;
-global.sinon = require('sinon');
-global.fixtures = require('./fixtures');
+GLOBAL.expect = chai.expect;
+GLOBAL.sinon = require('sinon');
+GLOBAL.fixtures = require('./fixtures');
+
+var app = require('../../');
+app.listen($config.port);
 
 chai.use(function (_chai, utils) {
   chai.Assertion.addMethod('error', function(error) {
@@ -11,15 +14,3 @@ chai.use(function (_chai, utils) {
     new chai.Assertion(obj).to.have.property('statusCode', error.prototype.status);
   });
 });
-
-var tser = require('tser');
-
-var api = require('../../');
-Object.defineProperty(global, 'api', {
-  get: function() {
-    return tser(api, {
-      defaults: { json: true }
-    });
-  }
-});
-
